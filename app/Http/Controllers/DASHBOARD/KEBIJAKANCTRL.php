@@ -13,9 +13,8 @@ class KEBIJAKANCTRL extends Controller
     //
     public function index($tahun,Request $request){
 
-    	$urusan=[HPV::list_id_urusan()[1]];
+    	$urusan=HPV::list_id_urusan();
     	$req=$request;
-        $req->urusan=$urusan;
         if($request->urusan){
     		$urusan=$request->urusan;
 
