@@ -15,7 +15,7 @@ class KEBIJAKANCTRL extends Controller
 
     	$urusan=[HPV::list_id_urusan()[1]];
     	$req=$request;
-
+        $req->urusan=$urusan;
         if($request->urusan){
     		$urusan=$request->urusan;
 
