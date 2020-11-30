@@ -1,0 +1,81 @@
+.main-header .navbar-static-top .navbar-nav>li>a{
+	font-size:10px!important;
+}
+
+.navbar-nav>.user-menu>.dropdown-menu, .navbar-nav>.user-menu>.dropdown-menu>.user-body{
+	left:auto;
+	right:0;
+}
+.highcharts-container {
+  max-width: calc(100%-100px)!important;
+}
+
+.navbar-nav>.user-menu>.dropdown-menu>.user-body a{
+	padding: 4px 10px!important;
+}
+
+.select2-container{
+	width: 100%!important;
+}
+
+.main-header .navbar{
+	border-bottom: 2px solid #222;
+}
+
+.w-space{
+  text-overflow: ellipsis;
+white-space: nowrap;
+overflow: hidden;
+}
+
+table th, table td{
+  vertical-align: middle!important;
+}
+table.sticky-table{
+ 
+  border-collapse: inherit;
+  vertical-align: middle;
+
+
+}
+ol{
+  padding-left: 10px;
+}
+
+table.sticky-table th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: -15px;
+  z-index: 2;
+  background: #fff;
+  vertical-align: middle;
+}
+
+table.sticky-table td[scope=row] {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  vertical-align: top;
+  color: inherit;
+  background: #d2d6de;
+  color:#222;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+
+table.sticky-table:nth-of-type(2) td:not([scope=row]):first-child {
+  left: 0;
+  vertical-align: middle;
+  z-index: 3;
+}
+.btn-xs{
+  font-size: 8px;
+}
+.btn-group{
+  display: table-row;
+  margin-top: 3px!important;
+}
+
+

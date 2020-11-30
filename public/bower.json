@@ -1,0 +1,17 @@
+{
+  "name": "sinkron",
+  "authors": [
+    "yuan putra <bhalayuan@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
