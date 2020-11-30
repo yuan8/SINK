@@ -120,6 +120,10 @@
 	Highcharts.chart('chart-mandat', {
     chart: {
         type: 'column',
+         scrollablePlotArea: {
+            minWidth: 80*548,
+            scrollPositionX: 1
+        }
     },
     title: {
         text: 'DATA RKPD ({{$GLOBALS['tahun_access']}})'
@@ -130,20 +134,15 @@
     xAxis: {
         type: "category",
         crosshair: true,
-        min: 0,
-        max: 8,
-        scrollbar: {
-            enabled: true
-        },
+     
+        
     },
     yAxis: {
-        min: 0,
+        // min: 0,
         title: {
             text: 'JUMLAH PROGRAM/KEGIATAN'
         },
-        scrollbar: {
-            enabled: true
-        },
+      
     },
     tooltip: {
         headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
@@ -162,7 +161,9 @@
             }
         }
     },
-
+     scrollbar: {
+    enabled: true
+  },
     series: [
     {
         name: 'Jumlah Program',
