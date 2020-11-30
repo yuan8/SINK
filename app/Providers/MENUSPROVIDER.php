@@ -56,7 +56,7 @@ class MENUSPROVIDER extends ServiceProvider
                         ],
                         [
                             'text'=>('LIST RKPD (DATA SIPD)'),
-                            'href'=>route('d.kebijakan.index',['tahun'=>(isset($GLOBALS['tahun_access']))?$GLOBALS['tahun_access']:date('Y') ]),
+                            'href'=>route('d.rkpd.pelaporan',['tahun'=>(isset($GLOBALS['tahun_access']))?$GLOBALS['tahun_access']:date('Y') ]),
                             'top_nav_class'=>'',
                             'icon'=>null,
                              

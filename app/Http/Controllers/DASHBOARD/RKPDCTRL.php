@@ -42,7 +42,71 @@ class RKPDCTRL extends Controller
     }
 
 
-    public function index($tahun,Request $request){
+    public function pelaporan($tahun,Request $request){
+        $urusan=HPV::list_id_urusan();
+        $req=$request;
+        if($request->urusan){
+            $urusan=$request->urusan;
+
+        }else{
+            $req->urusan=[];
+        }
+
+        $list_urusan=DB::table('public.master_urusan')->whereIn('id',HPV::list_id_urusan())->get();
+        $data=YDB::query("select
+            data.jumlah_urusan as jumlah_urusan,
+            (case when length(d.id) < 3 then 'PROVINSI' else 'KOTA' end) as jenis_pemda,
+            left(d.id,2) as kode_provinsi,
+             data.jumlah_program,data.jumlah_kegiatan, (dt.id) as exist,st.pagu as pagu_laporan, dt.last_date,st.nomenklatur,st.method, d.nama as nama_pemda,d.id as kodepemda,dt.pagu,st.tipe_pengambilan, dt.matches,dt.status,st.perkada from
+            public.master_daerah as d  
+            left join rkpd.master_".$tahun."_status_data as dt on d.id = dt.kodepemda 
+            left join rkpd.master_".$tahun."_status as st on st.kodepemda=dt.kodepemda
+            left join ((select count(distinct(k.id_urusan)) as jumlah_urusan, k.kodepemda,count(distinct(k.id)) as jumlah_kegiatan, count(distinct(k.id_program)) jumlah_program  from  rkpd.master_".$tahun."_kegiatan as k where  k.id_urusan in (".implode(',',$urusan).") group by k.kodepemda )  ) as data on data.kodepemda = d.id order by d.id asc
+        ")->get();
+        $data_chart=['jumlah_program'=>[],'jumlah_kegiatan'=>[]];
+
+        foreach ($data as $key => $value) {
+            $data_chart['jumlah_kegiatan'][]=[
+                'name'=>$value->nama_pemda,
+                'y'=>$value->jumlah_kegiatan,
+                'satuan'=>'KEGIATAN'
+            ];
+
+         $data_chart['jumlah_program'][]=[
+                'name'=>$value->nama_pemda,
+                'y'=>$value->jumlah_program,
+                'satuan'=>'PROGRAM'
+
+            ];
+            if($value->jumlah_urusan){
+                $data[$key]->value=($value->jumlah_urusan/7)*100;
+
+            }else{
+                $data[$key]->value=0;
+            }
+
+            $data[$key]->name=$value->nama_pemda;
+            $data[$key]->id=$value->kodepemda;
+             $data[$key]->link=route('d.rkpd.detail',['tahun'=>$GLOBALS['tahun_access'],'id'=>$value->kodepemda,'urusan'=>$req->urusan]);
+             
+            $data[$key]->color=static::percertase_color($data[$key]->value);
+
+            $data[$key]->tooltip='<p><b>'.$value->nama_pemda."</b></p><br><p>JUMLAH URUSAN :".$value->jumlah_urusan.'/7</p><br><p>JUMLAH PROGRAM :'.number_format($value->jumlah_program)."</p><br><p>JUMLAH KEGIATAN :".number_format($value->jumlah_kegiatan).'</p>';
+
+        }
+
+        return view('sinkronisasi.dashboard.rkpd.pelaporan')->with([
+            'data'=>$data,
+            'req'=>$req,
+            'list_urusan'=>$list_urusan,
+            'data_chart'=>$data_chart
+        ]);
+
+
+
+    }
+
+    public function index($tahun, Request $request){
     	$urusan=HPV::list_id_urusan();
     	$req=$request;
 

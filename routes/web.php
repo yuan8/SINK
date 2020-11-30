@@ -288,6 +288,8 @@ Route::get('/home',function(){
 Route::prefix('dashboard/{tahun?}')->middleware(['bindTahun'])->group(function () {
 	Route::get('/','DASHBOARD\HomeCtrl@index')->name('index');
 	Route::get('/rkpd','DASHBOARD\RKPDCTRL@index')->name('d.rkpd.index');
+	Route::get('/rkpd/pelaporan','DASHBOARD\RKPDCTRL@pelaporan')->name('d.rkpd.pelaporan');
+
 	Route::get('/rkpd/provinsi/{id}','DASHBOARD\RKPDCTRL@per_provinsi')->name('d.rkpd.per_provinsi');
 	Route::get('/rkpd/detail/{id}','DASHBOARD\RKPDCTRL@detail')->name('d.rkpd.detail');
 
