@@ -20,6 +20,29 @@ Route::get('mogo',function(){
   	->insertGetId($data);
 });
 
+
+Route::get('/man/{tahun}',function($tahun){
+	$data=DB::connection('p')->table('public.ikb_perkada')
+// 	->selectRaw("id_urusan,id_sub_urusan,tahun,id_mandat,replace(uraian,'lslsl','') as uraian,replace(replace(regexp_matches(uraian , '20[0-9][0-9]')::text,'}',''),'{','')::int as tahun_berlaku,'PERMEN' jenis"
+// )
+	->where('tahun',$tahun)->get();
+	foreach ($data as $key => $d) {
+		$data=DB::connection('sink_form')->table('sink_form.td_'.$tahun.'_kb')->insert([
+			'id_penilaian'=>$d->id_integrasi,
+			'id_urusan'=>$d->id_urusan,
+			'id_sub_urusan'=>$d->id_sub_urusan,
+			'uraian'=>$d->uraian,
+			'tahun'=>$d->tahun,
+			'kodepemda'=>$d->kode_daerah,
+			'tahun_berlaku'=>2020,
+			'jenis'=>'PERKADA',
+			'id'=>$d->id
+
+		]);
+	}
+
+});
+
 Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun','can:alive'])->group(function () {
 	Route::get('/','SINK\HomeCtrl@index')->name('sink.index');
 	Route::get('/ubah-tahun-access','SINK\HomeCtrl@tahun_acces')->name('sink.form.tahun_acces');
@@ -288,10 +311,10 @@ Route::get('/home',function(){
 Route::prefix('dashboard/{tahun?}')->middleware(['bindTahun'])->group(function () {
 	Route::get('/','DASHBOARD\HomeCtrl@index')->name('index');
 	Route::get('/rkpd','DASHBOARD\RKPDCTRL@index')->name('d.rkpd.index');
-	Route::get('/rkpd/pelaporan','DASHBOARD\RKPDCTRL@pelaporan')->name('d.rkpd.pelaporan');
-
 	Route::get('/rkpd/provinsi/{id}','DASHBOARD\RKPDCTRL@per_provinsi')->name('d.rkpd.per_provinsi');
 	Route::get('/rkpd/detail/{id}','DASHBOARD\RKPDCTRL@detail')->name('d.rkpd.detail');
+	Route::get('/rkpd/pelaporan/','DASHBOARD\RKPDCTRL@pelaporan')->name('d.rkpd.pelaporan');
+
 
 	Route::get('/kebijakan/','DASHBOARD\KEBIJAKANCTRL@index')->name('d.kebijakan.index');
 	Route::get('/kebijakan-pusat/','DASHBOARD\KEBIJAKANCTRL@pusat')->name('d.kebijakan.pusat');
