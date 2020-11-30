@@ -29,7 +29,7 @@ Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun','can:alive'])->g
 
 });
 
-Route::prefix('initial/{tahun?}')->middleware(['bindTahun','can:alive'])->group(function () {
+Route::prefix('initial/{tahun?}')->group(function () {
 	Route::get('/initial-db','SINK\InitCtrl@init');
 	Route::get('/nomen-db','SINK\NOMENKLATURCTRL@provinsi');
 
@@ -197,9 +197,9 @@ Route::prefix('sinkronisasi-daerah/{tahun?}')->middleware(['bindTahun','auth:web
 
 
 
-		// 
+		//
 
-		// INDIKATOR 
+		// INDIKATOR
 		Route::get('/master-indikator','DAERAH\MASTERINDIKATORCTRL@index')->name('sink.daerah.indikator.index');
 
 	// rkpd
@@ -320,4 +320,3 @@ Route::prefix('dashboard/{tahun?}')->middleware(['bindTahun'])->group(function (
 
 
 });
-

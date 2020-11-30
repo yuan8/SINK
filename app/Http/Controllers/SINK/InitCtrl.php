@@ -15,8 +15,8 @@ use YT;
 class InitCtrl extends Controller
 {
     public function init($tahun){
-
-        static::tahun_access($tahun);
+      set_time_limit(-1);
+      static::tahun_access($tahun);
     	static::scheduler_desk($tahun);
     	static::sumber_indikator($tahun);
     	static::kebijakan($tahun);
@@ -27,24 +27,23 @@ class InitCtrl extends Controller
     	static::kewenangan_bridge($tahun);
     	static::permasalahan($tahun);
 
-        static::nomenklatur($tahun);
+      static::nomenklatur($tahun);
     	static::rekomendasi($tahun);
     	static::rekomendasi_indikator($tahun);
-        static::bridge_indikator_pusat($tahun);
-        InitRkpdCtrl::init($tahun,true);
-        static::dukungan_pusat_indikator($tahun);
-        static::nested_indikator($tahun);
-        static::nspk_rekomendasi($tahun);
+      static::bridge_indikator_pusat($tahun);
+      InitRkpdCtrl::init($tahun,true);
+      static::dukungan_pusat_indikator($tahun);
+      static::nested_indikator($tahun);
+      static::nspk_rekomendasi($tahun);
+      // NOMENKLATURCTRL::init($tahun);
 
-        NOMENKLATURCTRL::init($tahun);
-
-        DB::table('sink_form.t_'.$tahun.'_nomenklatur')->where('id_urusan',2)->update([
-            'id_urusan'=>3
-        ]);
+      DB::table('sink_form.t_'.$tahun.'_nomenklatur')->where('id_urusan',2)->update([
+          'id_urusan'=>3
+      ]);
 
     	return 'done !, database '.$tahun.' sinkronisasi created';
 
-    } 
+    }
 
     static function nspk_rekomendasi($tahun=2020){
         if(!Schema::connection('sink_form')->hasTable('sink_form.td_'.$tahun.'_rekomendasi_nspk')){
@@ -76,7 +75,7 @@ class InitCtrl extends Controller
         if(!Schema::connection('sink_form')->hasTable('sink_form.t_'.$tahun.'_nested_indikator_bridge')){
             Schema::create('sink_form.t_'.$tahun.'_nested_indikator_bridge',function(Blueprint $table) use ($tahun){
                 $table->bigIncrements('id');
-          
+
                 $table->bigInteger('id_parent')->unsigned();
                 $table->bigInteger('id_indikator')->unsigned();
                 $table->bigInteger('id_user_created')->nullable();
@@ -131,7 +130,7 @@ class InitCtrl extends Controller
         }
     }
 
-   
+
 
     static function scheduler_desk($tahun=2020){
     	if(!Schema::connection('sink_form')->hasTable('sink_form.t_'.$tahun.'_scheduler_desk')){
@@ -205,10 +204,10 @@ class InitCtrl extends Controller
     				'end'=>YT::now()->addMonths(3),
     				'tahun'=>$tahun
     			],
-    			
+
 
     		]);
-    		
+
     	}
 
     	if(!Schema::connection('sink_form')->hasTable('sink_form.t_'.$tahun.'_status_form')){
@@ -224,7 +223,7 @@ class InitCtrl extends Controller
     			$table->timestamps();
 
     		});
-    		
+
     	}
 
     }
@@ -240,7 +239,7 @@ class InitCtrl extends Controller
                 $table->string('indikator_kinerja_pemda')->nullable();
                 $table->timestamps();
 
-            });  
+            });
         }
 
         DB::table('sink_form.tahun_access')->insertOrIgnore([
@@ -263,7 +262,7 @@ class InitCtrl extends Controller
     			$table->timestamps();
 
     		});
-    		
+
     	}
 
     	if(!Schema::connection('sink_form')->hasTable('sink_form.t_'.$tahun.'_kb')){
@@ -470,7 +469,7 @@ class InitCtrl extends Controller
     			$table->text('cara_hitung')->nullable();
     			$table->text('path_img')->nullable();
     			$table->bigInteger('id_parent')->nullable();
-    			
+
     			$table->bigInteger('id_user_created')->nullable();
     			$table->bigInteger('id_user_update')->nullable();
     			$table->unique(['kode','tahun','id_urusan','id_sub_urusan']);
@@ -641,7 +640,7 @@ class InitCtrl extends Controller
 
     			$table->bigInteger('id_user_created')->nullable();
     			$table->bigInteger('id_user_update')->nullable();
-                
+
     			$table->unique(['kode','id_nomenklatur','tahun','kodepemda','id_ms']);
     			$table->timestamps();
 
@@ -661,7 +660,7 @@ class InitCtrl extends Controller
 
     	}
 
-        
+
     }
 
     static function rekomendasi_indikator($tahun){
@@ -685,7 +684,7 @@ class InitCtrl extends Controller
 			      ->references('id')->on('sink_form.td_'.$tahun.'_rekomendasi')
 			      ->onDelete('cascade');
 
-			   
+
 
     		});
 
