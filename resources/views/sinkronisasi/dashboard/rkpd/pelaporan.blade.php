@@ -91,7 +91,7 @@
 							@foreach($data as $d)
 								<tr data-tt-id="d_{{$d->kodepemda}}" {{$d->jenis_pemda=='PROVINSI'?'':'dd-tt-parent-id="d_'.$d->kode_provinsi.'"'}}>
 									<td>
-										<a href="" class="btn btn-primary btn-xs">Detail</a>
+										<a href="{{route('d.rkpd.detail',['tahun'=>$GLOBALS['tahun_access','kodepemda'=>$d->id,'urusan'=>$req->urusan]])}}" class="btn btn-primary btn-xs">Detail</a>
 									</td>
 									<td>{{$d->kodepemda}}</td>
 									<td>{{$d->nama_pemda}}</td>
