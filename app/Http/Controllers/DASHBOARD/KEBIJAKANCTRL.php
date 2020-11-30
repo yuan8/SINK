@@ -270,7 +270,7 @@ class KEBIJAKANCTRL extends Controller
     		order by mandat.id_urusan asc,mandat.id_sub_urusan asc , mandat.id desc
     	"));
 
-    	$data_chart=['uu','pp','permen','perpres'];
+    	$data_chart=['uu'=>[],'pp'=>[],'permen'=>[],'perpres'=>[]];
 
     	foreach ($data as $key => $d) {
     		
