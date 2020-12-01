@@ -20,7 +20,7 @@ Route::get('mogo',function(){
   	->insertGetId($data);
 });
 
-Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun','can:alive'])->group(function () {
+Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun'])->group(function () {
 	Route::get('/','SINK\HomeCtrl@index')->name('sink.index');
 	Route::get('/ubah-tahun-access','SINK\HomeCtrl@tahun_acces')->name('sink.form.tahun_acces');
 	Route::post('/ubah-tahun-access','SINK\HomeCtrl@ubah_tahun_access')->name('sink.form.ubah_tahun');
