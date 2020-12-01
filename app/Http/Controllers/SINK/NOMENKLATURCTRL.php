@@ -166,8 +166,13 @@ class NOMENKLATURCTRL extends Controller
 
 
    public static function init($tahun){
-   	static::provinsi($tahun);
-   	static::kab($tahun);
+   	if(file_exists(storage_path('app/public/init/'.$tahun.'/nomen_provinsi.Xlsx'))){
+   		static::provinsi($tahun);
+   	}
+   	if(file_exists(storage_path('app/public/init/'.$tahun.'/nomen_kab-X.Xlsx'))){
+   		static::kab($tahun);
+   	}
+
 
    }
 }
