@@ -20,6 +20,7 @@ Route::get('mogo',function(){
   	->insertGetId($data);
 });
 
+<<<<<<< HEAD
 
 Route::get('/man/{tahun}',function($tahun){
 	$data=DB::connection('p')->table('public.ikb_perkada')
@@ -44,6 +45,9 @@ Route::get('/man/{tahun}',function($tahun){
 });
 
 Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun','can:alive'])->group(function () {
+=======
+Route::prefix('sinkronisasi/{tahun?}')->middleware(['bindTahun'])->group(function () {
+>>>>>>> e4585ef369e110400a428b870453bda536d76427
 	Route::get('/','SINK\HomeCtrl@index')->name('sink.index');
 	Route::get('/ubah-tahun-access','SINK\HomeCtrl@tahun_acces')->name('sink.form.tahun_acces');
 	Route::post('/ubah-tahun-access','SINK\HomeCtrl@ubah_tahun_access')->name('sink.form.ubah_tahun');

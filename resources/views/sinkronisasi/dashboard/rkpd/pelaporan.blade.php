@@ -82,8 +82,10 @@
 							<th>DATA RKPD</th>
 							<th>RKPD FINAL</th>
 							<th>RKPD BELUM FINAL</th>
+							@if(!$req->urusan)
 							<th>RKPD TERPETAKAN (BELUM LENGKAP)</th>
-							<th>RKPD TERPETAKAN LENGKAP</th>
+							@endif
+							<th>RKPD TERPETAKAN {{!$req->urusan?'LENGKAP':''}}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -104,9 +106,12 @@
 							<td>
 								{{$meta['PROVINSI']['jumlah_pemda_belum_final']}} PEMDA
 							</td>
+							@if(!$req->urusan)
+
 							<td>
 								{{$meta['PROVINSI']['jumlah_pemda_terpetakan']}} PEMDA
 							</td>
+							@endif
 							<td>
 								{{$meta['PROVINSI']['jumlah_pemda_terpetakan_lengkap']}} PEMDA
 							</td>
@@ -129,9 +134,13 @@
 							<td>
 								{{$meta['KOTA']['jumlah_pemda_belum_final']}} PEMDA
 							</td>
+							@if(!$req->urusan)
+
 							<td>
 								{{$meta['KOTA']['jumlah_pemda_terpetakan']}} PEMDA
 							</td>
+							@endif
+
 							<td>
 								{{$meta['KOTA']['jumlah_pemda_terpetakan_lengkap']}} PEMDA
 							</td>
@@ -151,8 +160,11 @@
 	  <li class="list-group-item"><i class="fas fa-circle" style="color:red;"></i> BELUM FINAL </li>
 	
 	  <li class="list-group-item"><i class="fas fa-circle" style="color:yellow;"> </i> BELUM  TERPETAKAN</li>
+	  @if(!$req->urusan)
+
 	  <li class="list-group-item"><i class="fas fa-circle" style="color:green;"> </i> TERPETAKAN</li>
-	  <li class="list-group-item"><i class="fas fa-circle" style="color:#45ff23;"> </i> TERPETAKAN LENGKAP</li>
+	  @endif
+	  <li class="list-group-item"><i class="fas fa-circle" style="color:#45ff23;"> </i> TERPETAKAN {{!$req->urusan?'LENGKAP':''}}</li>
 	</ul>
 </div>
 @php
@@ -319,6 +331,9 @@ Highcharts.chart('chart-persentase', {
             valueSuffix: '%'
         }
     },
+    subtitle:{
+    	text:'{{$req_urusan?$req_urusan->nama:''}}'
+    },
     plotOptions: {
         pie: {
             allowPointSelect: true,
@@ -340,7 +355,7 @@ Highcharts.chart('chart-persentase', {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Persentase',
         colorByPoint: true,
         data: [{
             name: 'RKPD BELUM TERPETAKAN',
@@ -366,6 +381,9 @@ Highcharts.chart('chart-persentase', {
                 chart: {
                     backgroundColor: 'transparent',
                 },
+                   subtitle:{
+    	text:'{{$req_urusan?$req_urusan->nama:''}}'
+    },
                 title: {
                     text: 'STATUS RKPD PEMDA {{$provinsi?$provinsi->nama:''}} TAHUN {{$GLOBALS['tahun_access']}}',
                     style:{ 

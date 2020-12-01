@@ -45,9 +45,14 @@ class RKPDCTRL extends Controller
     public function pelaporan($tahun,Request $request){
         $urusan=HPV::list_id_urusan();
         $req=$request;
+        $req_urusan=null;
         if(!empty($request->urusan)){
             if(!empty($request->urusan[0])){
                  $urusan=$request->urusan;
+                 $req_urusan=YDB::query("select * from public.master_urusan as u where u.id=".$request->urusan[0])->first();
+
+            }else{
+                $req->urusan=null;
             }   
 
         }else{
@@ -97,11 +102,11 @@ class RKPDCTRL extends Controller
         max(dt.status) as status,
         max(dt.last_date) as last_date,
         max(dt.last_date) as last_date,
-        sum(k.pagu) as pagu_pemetaan,
+        sum(case when dt.status=5 then k.pagu else null end ) as pagu_pemetaan,
         max(dt.pagu) as pagu_pelaporan,
         max(st.pagu) as pagu_data,
-        count(distinct(k.id)) as jumlah_kegiatan,
-        count(distinct(k.id_program)) as jumlah_program,
+        count(distinct(case when dt.status=5 then k.id else null end )) as jumlah_kegiatan,
+        count(distinct(case when dt.status=5 then k.id_program else null end )) as jumlah_program,
         (case when length(d.id) < 3 then 'PROVINSI' else 'KOTA' end) as jenis_pemda
         from public.master_daerah as d
         left join rkpd.master_".$tahun."_status_data as dt on dt.kodepemda=d.id
@@ -122,11 +127,10 @@ class RKPDCTRL extends Controller
 
         
         foreach ($data as $key => $d) {
+            $data_cache=$d;
             if($provinsi){
                 $d->jenis_pemda='KOTA';
             }
-            $data_cache=$d;
-            
 
             if($d->exist_data){
                 $meta[$d->jenis_pemda]['jumlah_pemda_melapor']+=1;
@@ -135,7 +139,7 @@ class RKPDCTRL extends Controller
                 if($d->exist_data_final){
                     $meta[$d->jenis_pemda]['jumlah_pemda_final']+=1;
                     $data_cache->text='RKPD BERSATUS FINAL';
-                 if($d->jumlah_urusan==count(HPV::list_id_urusan())){
+                 if($d->jumlah_urusan==count($urusan)){
                     $data_cache->value=100;
                     $meta[$d->jenis_pemda]['jumlah_pemda_terpetakan_lengkap']+=1;
                     $data_cache->text='RKPD TERPETAKAN '.count($urusan).' URUSAN LENGKAP';
@@ -192,7 +196,8 @@ class RKPDCTRL extends Controller
             'meta'=>$meta,
             'urusan'=>$list_urusan_filter,
             'provinsi'=>$provinsi,
-            'list_provinsi'=>$list_provinsi
+            'list_provinsi'=>$list_provinsi,
+            'req_urusan'=>$req_urusan
         ]);
 
 

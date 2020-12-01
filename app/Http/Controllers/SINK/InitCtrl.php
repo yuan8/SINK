@@ -14,8 +14,10 @@ use App\Http\Controllers\SINK\NOMENKLATURCTRL;
 use YT;
 class InitCtrl extends Controller
 {
-    public function init($tahun){
+    public function init($tahun_ac){
       set_time_limit(-1);
+        $tahun_access=[$tahun_ac,$tahun_ac+1];
+        foreach ($tahun_access as $key => $tahun) {
         static::tahun_access($tahun);
         static::scheduler_desk($tahun);
         static::sumber_indikator($tahun);
@@ -37,11 +39,13 @@ class InitCtrl extends Controller
         static::nspk_rekomendasi($tahun);
         NOMENKLATURCTRL::init($tahun);
 
-      DB::table('sink_form.t_'.$tahun.'_nomenklatur')->where('id_urusan',2)->update([
-          'id_urusan'=>3
-      ]);
+          DB::table('sink_form.t_'.$tahun.'_nomenklatur')->where('id_urusan',2)->update([
+              'id_urusan'=>3
+          ]);
+                 
+         } 
 
-    	return 'done !, database '.$tahun.' sinkronisasi created';
+    return 'done !, database '.$tahun.' sinkronisasi created';
 
     }
 
@@ -409,7 +413,7 @@ class InitCtrl extends Controller
 
     		});
 
-    		DB::table('sink_form.t_'.$tahun.'_sumber_data')->insert([
+    		DB::table('sink_form.t_'.$tahun.'_sumber_data')->insertOrIgnore([
     			[
     				'id'=>1,
     				'tahun'=>$tahun,
@@ -423,7 +427,14 @@ class InitCtrl extends Controller
     				'kode'=>'RKP.'.$tahun,
     				'jenis'=>'RKP',
     				'uraian'=>'RKP ('.$tahun.')',
-    			]
+    			],
+                [
+                    'id'=>3,
+                    'tahun'=>$tahun,
+                    'kode'=>'PERMENDAGRI.'.$tahun,
+                    'jenis'=>'PERMENDAGRI',
+                    'uraian'=>'PERMENDAGRI 18 TAHUN '.$tahun.'',
+                ]
     		]);
 
 
