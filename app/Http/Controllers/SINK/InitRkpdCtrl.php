@@ -37,9 +37,10 @@ class InitRkpdCtrl extends Controller
 
         if($console){
             return 'initial database RKPD '.$tahun.' is done';
+        }else{
+            return back();
         }
 
-    	return back();
     }
 
 
