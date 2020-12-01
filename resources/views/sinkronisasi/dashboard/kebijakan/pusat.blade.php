@@ -179,13 +179,19 @@
             dataLabels: {
                 enabled: true,
                 format: '{point.y}'
-            }
+            },
+            events:{
+	    	click:function(e){
+	    		window.location.href=e.point.link??'#';
+	    	}
+	    },
         }
     },
 
     series: [
     {
         name: 'UU',
+
         data: <?= json_encode($data_chart['uu']) ?>
 
     }, 

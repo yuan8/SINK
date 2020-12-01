@@ -16,26 +16,26 @@ class InitCtrl extends Controller
 {
     public function init($tahun){
       set_time_limit(-1);
-      static::tahun_access($tahun);
-    	static::scheduler_desk($tahun);
-    	static::sumber_indikator($tahun);
-    	static::kebijakan($tahun);
-    	static::rpjmn($tahun);
-    	static::rkp($tahun);
-    	static::kewenangan($tahun);
-    	static::indikator($tahun);
-    	static::kewenangan_bridge($tahun);
-    	static::permasalahan($tahun);
+        static::tahun_access($tahun);
+        static::scheduler_desk($tahun);
+        static::sumber_indikator($tahun);
+        static::kebijakan($tahun);
+        static::rpjmn($tahun);
+        static::rkp($tahun);
+        static::kewenangan($tahun);
+        static::indikator($tahun);
+        static::kewenangan_bridge($tahun);
+        static::permasalahan($tahun);
 
-      static::nomenklatur($tahun);
-    	static::rekomendasi($tahun);
-    	static::rekomendasi_indikator($tahun);
-      static::bridge_indikator_pusat($tahun);
-      InitRkpdCtrl::init($tahun,true);
-      static::dukungan_pusat_indikator($tahun);
-      static::nested_indikator($tahun);
-      static::nspk_rekomendasi($tahun);
-      // NOMENKLATURCTRL::init($tahun);
+        static::nomenklatur($tahun);
+        static::rekomendasi($tahun);
+        static::rekomendasi_indikator($tahun);
+        static::bridge_indikator_pusat($tahun);
+        InitRkpdCtrl::init($tahun,true);
+        static::dukungan_pusat_indikator($tahun);
+        static::nested_indikator($tahun);
+        static::nspk_rekomendasi($tahun);
+        NOMENKLATURCTRL::init($tahun);
 
       DB::table('sink_form.t_'.$tahun.'_nomenklatur')->where('id_urusan',2)->update([
           'id_urusan'=>3
