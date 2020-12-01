@@ -14,7 +14,7 @@ use App\Http\Controllers\SINK\NOMENKLATURCTRL;
 use YT;
 class InitCtrl extends Controller
 {
-    public function init($tahun_ac){
+    public function init($tahun_ac,$console=false){
       set_time_limit(-1);
         $tahun_access=[$tahun_ac,$tahun_ac+1];
         foreach ($tahun_access as $key => $tahun) {
