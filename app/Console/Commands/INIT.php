@@ -88,8 +88,56 @@ class INIT extends Command
             InitCtrl::bridge_indikator_pusat($tahun);
             $this->info("Building  bridge_indikator_pusat {$tahun}");
 
-            InitRkpdCtrl::inital($tahun,true);
-            $this->info("Building  InitRkpdCtrl {$tahun}");
+
+            InitRkpdCtrl::status($tahun);
+            $this->info("Building  status rkpd {$tahun}");
+
+        
+            InitRkpdCtrl::bidang($tahun);
+            $this->info("Building  bidang rkpd {$tahun}");
+
+            InitRkpdCtrl::program($tahun);
+
+            $this->info("Building  program rkpd {$tahun}");
+
+            InitRkpdCtrl::program_capaian($tahun);
+            $this->info("Building  program_capaian rkpd {$tahun}");
+
+
+            InitRkpdCtrl::kegiatan($tahun);
+            $this->info("Building  program_capaian rkpd {$tahun}");
+
+            InitRkpdCtrl::kegiatan_indikator($tahun);
+            $this->info("Building  kegiatan_indikator rkpd {$tahun}");
+
+            InitRkpdCtrl::kegiatan_sumberdana($tahun);
+            $this->info("Building  kegiatan_sumberdana rkpd {$tahun}");
+
+
+            InitRkpdCtrl::sub_kegiatan($tahun);
+            $this->info("Building  sub_kegiatan rkpd {$tahun}");
+
+            InitRkpdCtrl::sub_kegiatan_indikator($tahun);
+            $this->info("Building  sub_kegiatan_indikator rkpd {$tahun}");
+
+            InitRkpdCtrl::sub_kegiatan_sumberdana($tahun);
+            $this->info("Building  sub_kegiatan_sumberdana rkpd {$tahun}");
+
+            InitRkpdCtrl::view($tahun);
+            $this->info("Building  view rkpd {$tahun}");
+
+            // InitRkpdCtrl::master_peta_indikator($tahun);
+            InitRkpdCtrl::peta_indikator_kegiatan($tahun);
+            $this->info("Building  peta_indikator_kegiatan rkpd {$tahun}");
+
+            InitRkpdCtrl::peta_indikator_program($tahun);
+            $this->info("Building  peta_indikator_program rkpd {$tahun}");
+
+            InitRkpdCtrl::peta_indikator_sub_kegiatan($tahun);
+            $this->info("Building  peta_indikator_sub_kegiatan rkpd {$tahun}");
+
+            InitRkpdCtrl::permasalahan_rkpd($tahun);
+            $this->info("Building  permasalahan_rkpd rkpd {$tahun}");
 
             InitCtrl::dukungan_pusat_indikator($tahun);
             $this->info("Building  dukungan_pusat_indikator {$tahun}");
