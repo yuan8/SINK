@@ -319,6 +319,9 @@ Route::prefix('dashboard/{tahun?}')->middleware(['bindTahun'])->group(function (
 	Route::get('/kebijakan/','DASHBOARD\KEBIJAKANCTRL@index')->name('d.kebijakan.index');
 	Route::get('/kebijakan-pusat/','DASHBOARD\KEBIJAKANCTRL@pusat')->name('d.kebijakan.pusat');
 
+	Route::get('/kebijakan-pusat/implementasi-pemda/{id}','DASHBOARD\KEBIJAKANCTRL@implementasi_pemda')->name('d.kebijakan.implementasi_pemda');
+
+
 	Route::get('/kebijakan/provinsi/{id}','DASHBOARD\KEBIJAKANCTRL@per_provinsi')->name('d.kebijakan.per_provinsi');
 
 	Route::get('/kebijakan/detail/{id}','DASHBOARD\KEBIJAKANCTRL@detail')->name('d.kebijakan.detail');

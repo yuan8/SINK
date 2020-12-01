@@ -73,63 +73,63 @@
 	</div>
 
 </div>
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="box box-solid">
-				<div class="box-body table-responsive" >
-					<table class="table table-bordered datatable-init " >
-						<thead>
-							<tr>
-								<th style="max-width: 20px;">ACTION</th>
 
-								<th style="max-width: 30px;">KODE PEMDA</th>
-								<th>NAMA PEMDA</th>
-								<th style="max-width: 60px;">PERSENTASE IMPLEMENTASI MANDAT PEMDA (SESUAI)</th>
-								<th>PROVINSI MENGIMPLEMENTASI KEBIJAKAN</th>
-								<th>JUMLAH IMPLEMENTASI MANDAT REGULASI PROVINSI</th>
-								<th>JUMLAH IMPLEMENTASI MANDAT REGULASI PROVINSI (SESUAI)</th>
-								<th>JUMLAH IMPLEMENTASI MANDAT KEGIATAN PROVINSI</th>
-								<th>JUMLAH IMPLEMENTASI MANDAT KEGIATAN PROVINSI (SESUAI)</th>
+<div class="box box-solid">
+	<div class="box-body table-responsive" >
+		<table class="table table-bordered datatable-init " >
+			<thead>
+				<tr>
+					<th style="max-width: 20px;">ACTION</th>
 
-
-							</tr>
-						</thead>
-						<tbody>
-							@foreach($data as $d)
-								<tr>
-									<td scope="row">
-										<div class="btn-group-vertical">
-											<a href="{{route('d.kebijakan.detail',['tahun'=>$GLOBALS['tahun_access'],'kodepemda'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-primary btn-xs">Detail</a>
-										
-										</div>
-
-									</td>
-									<td ><b>{{$d->id}}</b></td>
-									<td><b>{{$d->name}}</b></td>
-									<td style="background:{{$d->color}}; {{in_array($d->color,['black','red','green'])?'color:#fff;':''}}"><b>{{number_format($d->value,1)}}%</b></td>
-									<td>{{$d->pemda_implemented?'IMPLEMENTED':'BELUM'}}</td>
-
-									<td>{{number_format($d->jumlah_mandat_regulasi)}} Mandat</td>
-									<td>{{number_format($d->jumlah_mandat_regulasi_sesuai)}}  Mandat </td>
-									<td>{{number_format($d->jumlah_mandat_kegiatan)}} Mandat</td>
-									<td>{{number_format($d->jumlah_mandat_kegiatan_sesuai)}}  Mandat</td>
-									
+					<th style="max-width: 30px;">KODE PEMDA</th>
+					<th>NAMA PEMDA</th>
+					<th style="max-width: 60px;">PERSENTASE IMPLEMENTASI MANDAT PEMDA</th>
+					<th style="max-width: 60px;">PERSENTASE IMPLEMENTASI MANDAT PEMDA (SESUAI)</th>
+					<th>PROVINSI MENGIMPLEMENTASI KEBIJAKAN</th>
+					<th>JUMLAH IMPLEMENTASI MANDAT REGULASI </th>
+					<th>JUMLAH IMPLEMENTASI MANDAT REGULASI  (SESUAI)</th>
+					<th>JUMLAH IMPLEMENTASI MANDAT KEGIATAN </th>
+					<th>JUMLAH IMPLEMENTASI MANDAT KEGIATAN  (SESUAI)</th>
 
 
-
-
-
-								</tr>
-							@endforeach
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($data as $d)
+					<tr>
+						<td scope="row">
+							<div class="btn-group-vertical">
+								<a href="{{route('d.kebijakan.detail',['tahun'=>$GLOBALS['tahun_access'],'kodepemda'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-primary btn-xs">Detail</a>
 							
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+							</div>
+
+						</td>
+						<td ><b>{{$d->id}}</b></td>
+						<td><b>{{$d->name}}</b></td>
+						<td style="background:{{$d->color_implemented}}; {{in_array($d->color_implemented,['black','red','green'])?'color:#fff;':''}}">
+							<b>{{number_format($d->implemented_count,1)}}%</b>
+						</td>
+						<td style="background:{{$d->color}}; {{in_array($d->color,['black','red','green'])?'color:#fff;':''}}"><b>{{number_format($d->value,1)}}%</b></td>
+						<td>{{$d->pemda_implemented?'IMPLEMENTED':'BELUM'}}</td>
+
+						<td>{{number_format($d->jumlah_mandat_regulasi)}} Mandat</td>
+						<td>{{number_format($d->jumlah_mandat_regulasi_sesuai)}}  Mandat </td>
+						<td>{{number_format($d->jumlah_mandat_kegiatan)}} Mandat</td>
+						<td>{{number_format($d->jumlah_mandat_kegiatan_sesuai)}}  Mandat</td>
+						
+
+
+
+
+
+					</tr>
+				@endforeach
+				
+			</tbody>
+		</table>
 	</div>
 </div>
+
 
 	
 </div>

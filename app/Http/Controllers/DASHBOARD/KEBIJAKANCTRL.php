@@ -11,6 +11,117 @@ use DB;
 class KEBIJAKANCTRL extends Controller
 {
     //
+    public function implementasi_pemda($tahun,$id,Request $request){
+      $mandat=YDB::query("
+            select 
+            (select su.nama from public.master_sub_urusan as su where su.id=mandat.id_sub_urusan limit 1) as nama_sub_urusan,
+            (select u.nama from public.master_urusan as u where u.id=mandat.id_urusan limit 1) 
+            as nama_urusan,
+            mandat.* from sink_form.t_".$tahun."_kb_mandat as mandat
+            where mandat.id=".$id." 
+        ")->first();
+
+      if($mandat){
+
+        $mandat->uu=DB::select(DB::raw("
+                select * from  sink_form.t_".$tahun."_kb as kb where kb.id_mandat=".$mandat->id." and jenis = 'UU'
+                "));
+        $mandat->pp=DB::select(DB::raw("
+            select * from  sink_form.t_".$tahun."_kb as kb where kb.id_mandat=".$mandat->id." and jenis = 'PP'
+            "));
+        $mandat->perpres=DB::select(DB::raw("
+            select * from sink_form.t_".$tahun."_kb as kb where kb.id_mandat=".$mandat->id." and jenis = 'PERPRES'
+            "));
+        $mandat->permen=DB::select(DB::raw("
+            select * from  sink_form.t_".$tahun."_kb as kb where kb.id_mandat=".$mandat->id." and jenis = 'PERMEN'
+        "));
+
+       
+
+        $query="select 
+            (select count(distinct(dk.id)) from public.master_daerah as dk where left(dk.id,2)=d.id) as jumlah_pemda,
+            d.id as id,
+            d.nama as name,
+            count(distinct(case when (left(k.kodepemda,2)=d.id and k.penilaian=1 ) then k.kodepemda else null end)) as jumlah_mandat_pemda_sesuai,
+            count(distinct(case when (left(k.kodepemda,2)=d.id and k.penilaian in (0,2)) then k.kodepemda else null end)) as jumlah_mandat_pemda_tidak_sesuai,
+            count(distinct(k.kodepemda)) as jumlah_pemda_implemented,
+            count(distinct(case when k.kodepemda=d.id then k.kodepemda else null end)) as provinsi_implemented
+            from public.master_daerah as d
+            left join sink_form.td_".$tahun."_kb_penilaian as k on (
+              left(k.kodepemda,2)=d.id  and k.id_mandat=".$id.")
+            left join sink_form.t_".$tahun."_kb_mandat as m on (
+             m.id=k.id_mandat)
+            where 
+
+            d.kode_daerah_parent is null
+            group by d.id,d.nama
+            order by d.id asc";
+
+            $data=YDB::query($query)->get();
+            $meta=[
+                'jumlah_pemda_implemented_sesuai'=>0,
+                'jumlah_pemda_implemented_tidak_sesuai'=>0,
+                'jumlah_pemda_implemented'=>0,
+                'jumlah_provinsi_implemented'=>0,
+                'jumlah_pemda'=>0,
+                'jumlah_pemda_provinsi'=>0
+
+
+            ];
+
+            $data_chart=['melapor'=>[],'tidak_melapor'=>[]];
+            foreach ($data as $key => $d) {
+                $meta['jumlah_pemda']+=$d->jumlah_pemda;
+                $meta['jumlah_pemda_provinsi']+=1;
+
+
+                $meta['jumlah_pemda_implemented']+=$d->jumlah_pemda_implemented;
+                $meta['jumlah_pemda_implemented_tidak_sesuai']+=$d->jumlah_mandat_pemda_tidak_sesuai;
+                $meta['jumlah_pemda_implemented_sesuai']+=$d->jumlah_mandat_pemda_sesuai;
+                $meta['jumlah_provinsi_implemented']+=($d->provinsi_implemented?1:0);
+
+                # code...
+                $data_chart['sesuai'][]=[
+                        'name'=>$d->name,
+                        'y'=>$d->jumlah_mandat_pemda_sesuai
+                    ];
+                 $data_chart['tidak_sesuai'][]=[
+                        'name'=>$d->name,
+                        'y'=>($d->jumlah_mandat_pemda_tidak_sesuai)
+                ];
+
+            if($d->jumlah_mandat_pemda_sesuai){
+                $data[$key]->value_sesuai=(float)(($d->jumlah_mandat_pemda_sesuai/$d->jumlah_pemda)*100);
+            }else{
+                 $data[$key]->value_sesuai=0;
+            }
+                    
+            if($d->jumlah_pemda_implemented){
+                $data[$key]->value=(float)(($d->jumlah_pemda_implemented/$d->jumlah_pemda)*100);
+
+            }else{
+                $data[$key]->value=0;
+            }
+                $data[$key]->color=HPV::percertase_color($data[$key]->value);
+                 $data[$key]->color_sesuai=HPV::percertase_color($data[$key]->value_sesuai);
+                $data[$key]->tooltip=view('sinkronisasi.dashboard.kebijakan.partial.mandat')->with('d',$data[$key])->render();
+
+            }
+
+            return view('sinkronisasi.dashboard.kebijakan.implement')->with([
+                'data'=>$data,
+                'data_chart'=>$data_chart,
+                'mandat'=>$mandat,
+                'req'=>$request,
+                'meta'=>$meta
+            ]);
+
+      }else{
+        return abort(404);
+      }
+
+    }
+
     public function index($tahun,Request $request){
 
     	$urusan=HPV::list_id_urusan();
@@ -151,10 +262,18 @@ class KEBIJAKANCTRL extends Controller
 	    		}else{
 	    			$data[$key]->value=0;
 	    		}
+
+                if($mandat->jumlah_mandat and $d->jumlah_mandat_implemented){
+                    $data[$key]->implemented_count=(float)((($d->jumlah_mandat_implemented)/$mandat->jumlah_mandat)*100);
+                }else{
+                    $data[$key]->implemented_count=0;
+                }
 	    		$data[$key]->link=route('d.kebijakan.detail',['tahun'=>$tahun,'kodepemda'=>$kodepemda,'urusan'=>$urusan]);
 
 	    		$data[$key]->color=HPV::percertase_color($data[$key]->value);
-	    		$data[$key]->tooltip=view('sinkronisasi.dashboard.kebijakan.partial.tooltip_pemda_persentase')->with(['mandat'=>$mandat,'d'=>$d])->render();
+                $data[$key]->color_implemented=HPV::percertase_color($data[$key]->implemented_count);
+	    		
+                $data[$key]->tooltip=view('sinkronisasi.dashboard.kebijakan.partial.tooltip_pemda_persentase')->with(['mandat'=>$mandat,'d'=>$d])->render();
 
 
 
@@ -278,7 +397,8 @@ class KEBIJAKANCTRL extends Controller
     			"));
     		$data_chart['uu'][]=[
     			'y'=>count($data[$key]->uu),
-    			'name'=>$d->uraian
+    			'name'=>$d->uraian,
+                'link'=>route('d.kebijakan.implementasi_pemda',['tahun'=>$GLOBALS['tahun_access'],'id'=>$data[$key]->id])
 
     		];
     		$data[$key]->pp=DB::select(DB::raw("
@@ -286,7 +406,8 @@ class KEBIJAKANCTRL extends Controller
     			"));
     		$data_chart['pp'][]=[
     			'y'=>count($data[$key]->pp),
-    			'name'=>$d->uraian
+    			'name'=>$d->uraian,
+                'link'=>route('d.kebijakan.implementasi_pemda',['tahun'=>$GLOBALS['tahun_access'],'id'=>$data[$key]->id])
 
     		];
     		$data[$key]->perpres=DB::select(DB::raw("
@@ -294,7 +415,8 @@ class KEBIJAKANCTRL extends Controller
     			"));
     		$data_chart['perpres'][]=[
     			'y'=>count($data[$key]->perpres),
-    			'name'=>$d->uraian
+    			'name'=>$d->uraian,
+                'link'=>route('d.kebijakan.implementasi_pemda',['tahun'=>$GLOBALS['tahun_access'],'id'=>$data[$key]->id])
 
     		];
     		$data[$key]->permen=DB::select(DB::raw("
@@ -303,7 +425,8 @@ class KEBIJAKANCTRL extends Controller
 
     		$data_chart['permen'][]=[
     			'y'=>count($data[$key]->permen),
-    			'name'=>$d->uraian
+    			'name'=>$d->uraian,
+                'link'=>route('d.kebijakan.implementasi_pemda',['tahun'=>$GLOBALS['tahun_access'],'id'=>$data[$key]->id])
 
     		];
 

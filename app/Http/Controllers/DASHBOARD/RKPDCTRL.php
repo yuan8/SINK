@@ -45,61 +45,154 @@ class RKPDCTRL extends Controller
     public function pelaporan($tahun,Request $request){
         $urusan=HPV::list_id_urusan();
         $req=$request;
-        if($request->urusan){
-            $urusan=$request->urusan;
+        if(!empty($request->urusan)){
+            if(!empty($request->urusan[0])){
+                 $urusan=$request->urusan;
+            }   
 
         }else{
             $req->urusan=[];
         }
 
+        $provinsi=null;
+        $list_provinsi=DB::table('public.master_daerah')->where('kode_daerah_parent',null)->get();
+        if($request->provinsi){
+            $provinsi=DB::table('public.master_daerah')->where('id',$request->provinsi)->first();
+        }
+
+        $meta=[
+            'PROVINSI'=>[
+                'jumlah_pemda'=>0,
+                'jumlah_pemda_melapor'=>0,
+                'jumlah_pemda_final'=>0,
+                'jumlah_pemda_belum_final'=>0,
+                'jumlah_pemda_terpetakan'=>0,
+                'jumlah_pemda_terpetakan_lengkap'=>0
+            ],
+            'KOTA'=>[
+                'jumlah_pemda'=>0,
+                'jumlah_pemda_melapor'=>0,
+                'jumlah_pemda_final'=>0,
+                'jumlah_pemda_belum_final'=>0,
+                'jumlah_pemda_terpetakan'=>0,
+                'jumlah_pemda_terpetakan_lengkap'=>0
+            ],
+        ];
+        
+
         $list_urusan=DB::table('public.master_urusan')->whereIn('id',HPV::list_id_urusan())->get();
-        $data=YDB::query("select
-            data.jumlah_urusan as jumlah_urusan,
-            (case when length(d.id) < 3 then 'PROVINSI' else 'KOTA' end) as jenis_pemda,
-            left(d.id,2) as kode_provinsi,
-             data.jumlah_program,data.jumlah_kegiatan, (dt.id) as exist,st.pagu as pagu_laporan, dt.last_date,st.nomenklatur,st.method, d.nama as nama_pemda,d.id as kodepemda,dt.pagu,st.tipe_pengambilan, dt.matches,dt.status,st.perkada from
-            public.master_daerah as d  
-            left join rkpd.master_".$tahun."_status_data as dt on d.id = dt.kodepemda 
-            left join rkpd.master_".$tahun."_status as st on st.kodepemda=dt.kodepemda
-            left join ((select count(distinct(k.id_urusan)) as jumlah_urusan, k.kodepemda,count(distinct(k.id)) as jumlah_kegiatan, count(distinct(k.id_program)) jumlah_program  from  rkpd.master_".$tahun."_kegiatan as k where  k.id_urusan in (".implode(',',$urusan).") group by k.kodepemda )  ) as data on data.kodepemda = d.id order by d.id asc
-        ")->get();
-        $data_chart=['jumlah_program'=>[],'jumlah_kegiatan'=>[]];
 
-        foreach ($data as $key => $value) {
-            $data_chart['jumlah_kegiatan'][]=[
-                'name'=>$value->nama_pemda,
-                'y'=>$value->jumlah_kegiatan,
-                'satuan'=>'KEGIATAN'
-            ];
+        $list_urusan_filter=DB::table('public.master_urusan')->whereIn('id',$urusan)->get();
 
-         $data_chart['jumlah_program'][]=[
-                'name'=>$value->nama_pemda,
-                'y'=>$value->jumlah_program,
-                'satuan'=>'PROGRAM'
+        $query="select
+        count(distinct(case when (dt.pagu >0 and  dt.status > 0) then d.id else null end )) as exist_data,
+        count(distinct(case when (dt.pagu >0 and  dt.status =5) then d.id else null end )) as exist_data_final,
+        count(distinct(k.id_urusan)) as jumlah_urusan,
+        string_agg(distinct(u.nama),'|') as list_nama_urusan,
+        d.id ,
+        min(dt.perkada) as perkada,
+        min(dt.nomenklatur) as nomenklatur,
+        min(dt.nomenklatur) as nomenklatur,
+        min(d.nama) as name,
+        max(dt.status) as status,
+        max(dt.last_date) as last_date,
+        max(dt.last_date) as last_date,
+        sum(k.pagu) as pagu_pemetaan,
+        max(dt.pagu) as pagu_pelaporan,
+        max(st.pagu) as pagu_data,
+        count(distinct(k.id)) as jumlah_kegiatan,
+        count(distinct(k.id_program)) as jumlah_program,
+        (case when length(d.id) < 3 then 'PROVINSI' else 'KOTA' end) as jenis_pemda
+        from public.master_daerah as d
+        left join rkpd.master_".$tahun."_status_data as dt on dt.kodepemda=d.id
+        left join rkpd.master_".$tahun."_status as st on st.kodepemda=d.id
+        left join rkpd.master_".$tahun."_kegiatan as k on (k.kodepemda=d.id and k.id_urusan in (".implode(',',$urusan).") )
+        left join public.master_urusan as u on u.id=k.id_urusan
+        ".($provinsi?"where left(d.id,2) = '".$provinsi->id."' ":'')."
+        group by d.id
+        order by d.id asc
+        ";
 
-            ];
-            if($value->jumlah_urusan){
-                $data[$key]->value=($value->jumlah_urusan/7)*100;
+        $data=YDB::query($query)->get();
 
+        $data_map=[
+            'KOTA'=>[],
+            'PROVINSI'=>[]
+        ];
+
+        
+        foreach ($data as $key => $d) {
+            if($provinsi){
+                $d->jenis_pemda='KOTA';
+            }
+            $data_cache=$d;
+            
+
+            if($d->exist_data){
+                $meta[$d->jenis_pemda]['jumlah_pemda_melapor']+=1;
+                $data_cache->text='TERDAPAT DATA RKPD';
+
+                if($d->exist_data_final){
+                    $meta[$d->jenis_pemda]['jumlah_pemda_final']+=1;
+                    $data_cache->text='RKPD BERSATUS FINAL';
+                 if($d->jumlah_urusan==count(HPV::list_id_urusan())){
+                    $data_cache->value=100;
+                    $meta[$d->jenis_pemda]['jumlah_pemda_terpetakan_lengkap']+=1;
+                    $data_cache->text='RKPD TERPETAKAN '.count($urusan).' URUSAN LENGKAP';
+
+                 }else if($d->jumlah_urusan>0){
+                    $data_cache->value=80;
+                    $meta[$d->jenis_pemda]['jumlah_pemda_terpetakan']+=1;
+                    $data_cache->text='RKPD TERPETAKAN HANYA '.$data_cache->jumlah_urusan.' URUSAN';
+
+                 }else{
+                    $data_cache->value=60;
+                    $data_cache->text.='<br> URUSAN BELUM TERPETAKAN ';
+
+
+                 }
+
+                }else{
+                    $data_cache->value=20;
+                    $meta[$d->jenis_pemda]['jumlah_pemda_belum_final']+=1;
+                    $data_cache->text='RKPD BERSATUS '.HPV::status_rkpd($data_cache->status);
+
+
+
+                }
             }else{
-                $data[$key]->value=0;
+                $data_cache->value=0;
+                $data_cache->text='TIDAK TERDAPAT DATA RKPD';
+
             }
 
-            $data[$key]->name=$value->nama_pemda;
-            $data[$key]->id=$value->kodepemda;
-             $data[$key]->link=route('d.rkpd.detail',['tahun'=>$GLOBALS['tahun_access'],'id'=>$value->kodepemda,'urusan'=>$req->urusan]);
-             
-            $data[$key]->color=static::percertase_color($data[$key]->value);
+            // if($d->list_nama_urusan==''){
+            //     $data_cache->list_nama_urusan='|';
+            // }
 
-            $data[$key]->tooltip='<p><b>'.$value->nama_pemda."</b></p><br><p>JUMLAH URUSAN :".$value->jumlah_urusan.'/7</p><br><p>JUMLAH PROGRAM :'.number_format($value->jumlah_program)."</p><br><p>JUMLAH KEGIATAN :".number_format($value->jumlah_kegiatan).'</p>';
+            $meta[$d->jenis_pemda]['jumlah_pemda']+=1;
+            $data_cache->tooltip='<p><b>'.$data_cache->name.'</b></p><br>'.$data_cache->text;
+
+            $data_cache->color=static::percertase_color($data_cache->value);
+            $data_map[$d->jenis_pemda][]=$data_cache;
+            $data[$key]=$data_cache;
 
         }
 
+        $data_chart=[];
+
+       
+
         return view('sinkronisasi.dashboard.rkpd.pelaporan')->with([
-            'data'=>$data,
+            'data'=>$data_map,
+            'table'=>$data,
             'req'=>$req,
             'list_urusan'=>$list_urusan,
-            'data_chart'=>$data_chart
+            'data_chart'=>$data_chart,
+            'meta'=>$meta,
+            'urusan'=>$list_urusan_filter,
+            'provinsi'=>$provinsi,
+            'list_provinsi'=>$list_provinsi
         ]);
 
 

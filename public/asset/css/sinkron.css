@@ -13,6 +13,9 @@
 .navbar-nav>.user-menu>.dropdown-menu>.user-body a{
 	padding: 4px 10px!important;
 }
+.highcharts-credits{
+  display: none;
+}
 
 .select2-container{
 	width: 100%!important;
@@ -63,6 +66,7 @@ table.sticky-table td[scope=row] {
   vertical-align: middle;
   font-weight: bold;
 }
+
 
 
 table.sticky-table:nth-of-type(2) td:not([scope=row]):first-child {

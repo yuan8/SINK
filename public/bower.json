@@ -6,12 +6,19 @@
   "description": "",
   "main": "",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/yuan8/SINK",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "datatables": "^1.10.21",
+    "jquery-treetable": "^3.2.0",
+    "highcharts": "^8.2.0",
+    "jquery-ui": "^1.12.1",
+    "numeral": "^2.0.6"
+  }
 }

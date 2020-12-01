@@ -5,6 +5,14 @@ $CONF_MENU=MENUS::dashboard();
 @endphp
 
 @section('adminlte_css')
+    
+      <script type="text/javascript" src="{{asset('bower_components/js-xlsx/dist/xlsx.core.min.js')}}"></script>
+
+    <script type="text/javascript" src="{{asset('bower_components/file-saverjs/FileSaver.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('bower_components/jquery-export/libs/jsPDF/jspdf.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('bower_components/jquery-export/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js')}}"></script>
+      <script type="text/javascript" src="{{asset('bower_components/jquery-export/tableExport.min.js')}}"></script>
+ 
 
     <link rel="stylesheet"
           href="{{ asset('vendor/adminlte/dist/css/skins/skin-' . config($CONF_THEM.'.skin', 'blue') . '.min.css')}} ">
@@ -17,6 +25,11 @@ $CONF_MENU=MENUS::dashboard();
     @yield('css')
     <link rel="stylesheet" type="text/css" href="{{asset('bower_components/jquery-treetable/css/jquery.treetable.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('bower_components/jquery-treetable/css/jquery.treetable.theme.default.css?v'.date('i'))}}">
+
+   
+   
+    
+
 @stop
 
 @section('body_class', 'skin-' . config($CONF_THEM.'.skin', 'blue') . ' sidebar-mini ' . (config($CONF_THEM.'.layout') ? [
@@ -189,6 +202,37 @@ $CONF_MENU=MENUS::dashboard();
                 }
             } 
         })
+
+
+       function EXPORT_PDF(div,filename='EXPORT-'){
+         $(div).tableExport({fileName: filename,
+                        type: 'pdf',
+                        jspdf: {
+                            docDefinition:{pageOrientation:'landscape'},
+                            format: 'bestfit',
+                            autotable: {styles: {overflow: 'linebreak'}},
+                            margins: {left:5, right:5, top:5, bottom:5},
+
+                        }
+                                
+                       });
+       }
+
+       function EXPORT_EXCEL(div,filename='EXPORT'){
+
+             $(div).tableExport({
+                        fileName: filename,
+                        type:'excel',
+                        mso: {fileFormat:'xlsx'}
+             
+                    });
+       }
+
+       if($('.datatable-auto').html()!==undefined){
+            $('.datatable-auto').dataTable({
+                lengthChange:false
+            });
+       }
 
     </script>
 @stop
