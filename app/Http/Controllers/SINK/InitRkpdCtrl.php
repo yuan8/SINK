@@ -15,8 +15,9 @@ class InitRkpdCtrl extends Controller
 
 
 
-    public static function init($tahun,$console=false){
+    public static function inital($tahun,$console=false){
     	static::status($tahun);
+        
     	static::bidang($tahun);
     	static::program($tahun);
     	static::program_capaian($tahun);

@@ -88,7 +88,7 @@ class INIT extends Command
             InitCtrl::bridge_indikator_pusat($tahun);
             $this->info("Building  bridge_indikator_pusat {$tahun}");
 
-            InitRkpdCtrl::init($tahun,true);
+            InitRkpdCtrl::inital($tahun,true);
             $this->info("Building  InitRkpdCtrl {$tahun}");
 
             InitCtrl::dukungan_pusat_indikator($tahun);
