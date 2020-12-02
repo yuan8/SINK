@@ -22,10 +22,8 @@ class KEBIJAKANCTRL extends Controller
         }
     }
 
-    
 
-
-     public function penilaian($tahun,$kodepemda,$kontect,$id){
+    public function penilaian($tahun,$kodepemda,$kontect,$id){
         $data=(array)YDB::query("
                 select * from  sink_form.td_".$tahun."_kb_penilaian as kb where kb.kodepemda='".$kodepemda."'  and kb.id=".$id."
             ")->first();
@@ -36,7 +34,7 @@ class KEBIJAKANCTRL extends Controller
         }
     }
 
-     public static function hapus_penilaian($tahun,$kodepemda,$kontect,$id){
+    public static function hapus_penilaian($tahun,$kodepemda,$kontect,$id){
         $data=(array)YDB::query("
                 select * from  sink_form.td_".$tahun."_kb_penilaian as kb where kb.kodepemda='".$kodepemda."'  and kb.id=".$id."
             ")->first();

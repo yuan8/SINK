@@ -207,9 +207,16 @@ class RKPDCTRL extends Controller
     public function index($tahun, Request $request){
     	$urusan=HPV::list_id_urusan();
     	$req=$request;
+        $urusan_db=null;
 
         if($request->urusan){
-    		$urusan=$request->urusan;
+            if($request->urusan[0]){
+            $urusan=$request->urusan;
+              $urusan_db=YDB::query("select * from public.master_urusan as u where u.id=".$request->urusan[0])->first();
+
+            }else{
+              $req->urusan=[];  
+            }
 
     	}else{
             $req->urusan=[];
@@ -260,16 +267,23 @@ class RKPDCTRL extends Controller
 
 
 
-    	return view('sinkronisasi.dashboard.rkpd.index')->with(['data'=>$data,'data_chart'=>$data_chart,'list_urusan'=>$list_urusan,'req'=>$req]);
+    	return view('sinkronisasi.dashboard.rkpd.index')->with(['data'=>$data,'data_chart'=>$data_chart,'list_urusan'=>$list_urusan,'req'=>$req,'req_urusan'=>$urusan_db]);
     }
 
     public function per_provinsi($tahun,$kodepemda,Request $request){
         $pemda=DB::table('public.master_daerah')->find($kodepemda);
             $urusan=HPV::list_id_urusan();
         $req=$request;
+        $urusan_db=null;
 
         if($request->urusan){
-            $urusan=$request->urusan;
+           if($request->urusan[0]){
+            $urusan_db=YDB::query('select * from public.master_urusan as u where u.id='.$request->urusan[0])->first();
+
+             $urusan=$request->urusan;
+         }else{
+            $req->urusan=[];
+         }
 
         }else{
             $req->urusan=[];
@@ -283,8 +297,13 @@ class RKPDCTRL extends Controller
             d.nama as name,
             count(distinct(k.id )) as jumlah_kegiatan,
             sum((k.pagu )) as jumlah_pagu,
-            count(distinct(k.id_program)) as jumlah_program
+            count(distinct(k.id_program)) as jumlah_program,
+            min(dt.nomenklatur) as nomenklatur,
+            min(dt.perkada) as perkada,
+            max(dt.last_date) as last_date,
+            max(dt.status) as status
             from public.master_daerah as d
+            left join rkpd.master_".$tahun."_status_data as dt on dt.kodepemda=d.id
             left join rkpd.master_".$tahun."_kegiatan as k on (
             k.status=5 and k.id_urusan in (".implode(',', $urusan).") and (k.kodepemda)=d.id)
             where left(d.id,2)='".$kodepemda."'
@@ -318,7 +337,7 @@ class RKPDCTRL extends Controller
 
 
 
-        return view('sinkronisasi.dashboard.rkpd.pemda_per_provinsi')->with(['data'=>$data,'data_chart'=>$data_chart,'list_urusan'=>$list_urusan,'req'=>$req,'pemda'=>$pemda]);
+        return view('sinkronisasi.dashboard.rkpd.pemda_per_provinsi')->with(['data'=>$data,'data_chart'=>$data_chart,'list_urusan'=>$list_urusan,'req'=>$req,'pemda'=>$pemda,'req_urusan'=>$urusan_db]);
     }
 
 

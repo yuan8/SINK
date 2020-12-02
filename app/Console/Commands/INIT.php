@@ -75,7 +75,6 @@ class INIT extends Command
             InitCtrl::permasalahan($tahun);
             $this->info("Building  permasalahan {$tahun}");
 
-
             InitCtrl::nomenklatur($tahun);
             $this->info("Building  nomenklatur {$tahun}");
 
@@ -88,10 +87,8 @@ class INIT extends Command
             InitCtrl::bridge_indikator_pusat($tahun);
             $this->info("Building  bridge_indikator_pusat {$tahun}");
 
-
             InitRkpdCtrl::status($tahun);
             $this->info("Building  status rkpd {$tahun}");
-
         
             InitRkpdCtrl::bidang($tahun);
             $this->info("Building  bidang rkpd {$tahun}");
@@ -103,7 +100,6 @@ class INIT extends Command
             InitRkpdCtrl::program_capaian($tahun);
             $this->info("Building  program_capaian rkpd {$tahun}");
 
-
             InitRkpdCtrl::kegiatan($tahun);
             $this->info("Building  program_capaian rkpd {$tahun}");
 
@@ -112,7 +108,6 @@ class INIT extends Command
 
             InitRkpdCtrl::kegiatan_sumberdana($tahun);
             $this->info("Building  kegiatan_sumberdana rkpd {$tahun}");
-
 
             InitRkpdCtrl::sub_kegiatan($tahun);
             $this->info("Building  sub_kegiatan rkpd {$tahun}");

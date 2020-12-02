@@ -17,7 +17,7 @@
 
 <div class="box box-solid">
 	<div class="box-body">
-		<table class="table-bordered table">
+		<table class="table-bordered table datatable-auto">
 			<thead>
 				<tr>
 					<th>URUSAN</th>
@@ -109,7 +109,7 @@
         <span class="info-box-icon bg-green"><i class="fa fa-check"></i></span>
 
         <div class="info-box-content">
-          <span class="info-box-text">SESUAI</span>
+          <span class="info-box-text">PEMDA SESUAI</span>
           <span class="info-box-number">{{$meta['jumlah_pemda_implemented_sesuai']}}</span>
         </div>
         <!-- /.info-box-content -->
@@ -121,7 +121,7 @@
         <span class="info-box-icon bg-maroon"><i class="fa fa-times"></i></span>
 
         <div class="info-box-content">
-          <span class="info-box-text">BELUM SESUAI</span>
+          <span class="info-box-text">PEMDA BELUM SESUAI</span>
           <span class="info-box-number">{{$meta['jumlah_pemda_implemented_tidak_sesuai']}}</span>
         </div>
         <!-- /.info-box-content -->

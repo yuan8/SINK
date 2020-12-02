@@ -1,7 +1,10 @@
 @php
-$dom_id_rkpd_detail='rkpd-'.rand(11,99);
+
+	if(!isset($dom_id_rkpd_detail)){
+		$dom_id_rkpd_detail='rkpd-'.rand(11,99);
+	}
 @endphp
-<table class="table table-bordered sticky-table" id="treetable-init-{{$dom_id_rkpd_detail}}">
+<table class="table table-bordered sticky-table" id="{{$dom_id_rkpd_detail}}">
 						<thead>
 							<tr>
 								<th>VISI</th>
@@ -36,7 +39,7 @@ $dom_id_rkpd_detail='rkpd-'.rand(11,99);
 								@php
 								$di=HPV::rkpd_nes($d);
 								@endphp
-								<tr class="bg-ifo">
+								<tr class="bg-ifo" data-tableexport-display="none">
 									<td colspan="5" >
 										<p class="w-space" style="max-width: 90%">PROGRESS {{$di['uraian']}}</p>
 									</td>
@@ -238,6 +241,6 @@ $dom_id_rkpd_detail='rkpd-'.rand(11,99);
 
 					<script type="text/javascript">
 						setTimeout(function(){
-							$('#treetable-init-{{$dom_id_rkpd_detail}}').treetable({ expandable: true,column:3,initialState:'expanded' });
+							$('#{{$dom_id_rkpd_detail}}').treetable({ expandable: true,column:3,initialState:'expanded' });
 						},500);
 					</script>

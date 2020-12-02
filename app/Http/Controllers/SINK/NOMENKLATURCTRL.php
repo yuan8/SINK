@@ -117,10 +117,6 @@ class NOMENKLATURCTRL extends Controller
 		
 	} 
 	Storage::put('/public/init/'.$tahun.'/nomen_provinsi.json',json_encode($json));
-
-
-	
-
    }
 
 

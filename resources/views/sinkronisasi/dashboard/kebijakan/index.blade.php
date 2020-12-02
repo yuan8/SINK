@@ -14,7 +14,7 @@
 <p class="text-center">PEMETAAN TAHUN {{$GLOBALS['tahun_access']}}</p>
 <hr>
 
-<div class="container-fluid" style="margin-bottom: 10px;">
+<div class="row" style="margin-bottom: 10px;">
 	<form action="{{url()->current()}}" method="get" id="form-f">
 			
 		<div class="col-md-12">
@@ -56,7 +56,8 @@
 <div class="row" style="margin-bottom: 15px;">
 
 
-	<div class="col-md-6" id="chart" style="background: #fff; height: 462px;">
+	<div class="col-md-12">
+		<div class="col-md-6" id="chart" style="background: #fff; height: 462px;">
 
 	</div>
 	<div class="col-md-6"  style="background: #fff;  height: 462px;">
@@ -71,17 +72,23 @@
 		  <li class="list-group-item"><i class="fas fa-circle" style="color:#45ff23;"> </i> <=100%</li>
 		</ul>
 	</div>
+	</div>
 
 </div>
-<div class="container">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box box-solid">
+				<div class="box-header with-border">
+					<div class="btn-group">
+						<button class="btn btn-success btn-sm" onclick="EXPORT_EXCEL('#table-data','DATA RKPD PEMDA PER PROVINSI TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT EXCEL<i class="fa fa-excel"></i></button>
+					<button class="btn btn-primary btn-sm" onclick="EXPORT_PDF('#table-data','DATA RKPD PEMDA PER PROVINSI TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT PDF<i class="fa fa-pdf"></i></button>
+					</div>
+				</div>
 				<div class="box-body table-responsive" >
-					<table class="table table-bordered datatable-init " >
+					<table data-page-length="548" class="table table-bordered datatable-auto" id="table-data" >
 						<thead>
 							<tr>
-								<th>ACTION</th>
+								<th data-tableexport-display="none">ACTION</th>
 
 								<th style="max-width: 30px;">KODE PEMDA</th>
 								<th>NAMA PEMDA</th>
@@ -101,7 +108,7 @@
 						<tbody>
 							@foreach($data as $d)
 								<tr>
-									<td scope="row">
+									<td scope="row" data-tableexport-display="none">
 										<div class="btn-group-vertical">
 											<a href="{{route('d.kebijakan.detail',['tahun'=>$GLOBALS['tahun_access'],'kodepemda'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-primary btn-xs">Detail Provinsi</a>
 										<a href="{{route('d.kebijakan.per_provinsi',['tahun'=>$GLOBALS['tahun_access'],'id'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-success btn-xs">Detail Pemda</a>
@@ -134,10 +141,8 @@
 			</div>
 		</div>
 	</div>
-</div>
 
 	
-</div>
 
 @stop
 

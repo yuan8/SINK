@@ -236,10 +236,13 @@
 							@foreach($table as $d)
 								<tr>
 									<td data-tableexport-display="none" scope="row">
-										<a href="" class="btn btn-xs btn-success">Detail</a>
+										<div class="btn-group-vertical">
+											<a href="{{route('d.rkpd.detail',['tahun'=>$GLOBALS['tahun_access'],'kodepemda'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-primary btn-xs">Detail RKPD Provinsi</a>
+											<a href="{{route('d.rkpd.per_provinsi',['tahun'=>$GLOBALS['tahun_access'],'id'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-success btn-xs">Detail Pemda</a>
+										</div>
 									</td>
 									<td>{{$d->id}}</td>
-									<td scope="row">{{$d->name}}</td>
+									<td scope="row" style="left:100px;">{{$d->name}}</td>
 									<td>{{HPV::status_rkpd($d->status)}}</td>
 									<td>{!!$d->nomenklatur!!}</td>
 									<td>{!!$d->perkada!!}</td>

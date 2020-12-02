@@ -1,31 +1,42 @@
 @extends('adminlte::dashboard')
 @section('content_header')
-    <h1 class="text-center">RKPD {{$pemda->nama}} BERLAKU TAHUN {{$GLOBALS['tahun_access']}}</h1>
+    <h1 class="text-center"><b>RKPD {{$pemda->nama}} BERLAKU TAHUN {{$GLOBALS['tahun_access']}}</b></h1>
 <hr>
 
 @stop
 
 @section('content')
-<div class="container-fluid" style="margin-bottom: 10px;">
+		<div class="row">
+
 	<form action="{{url()->current()}}" method="get" id="form-f">
 			
-		<div class="col-md-12">
+			<div class="col-md-12">
 			<label>URUSAN</label>
-			<select class="form-control init-select-2" multiple="" name="urusan[]" onchange="$('#form-f').submit()">
+			<select class="form-control init-select-2"  name="urusan[]" onchange="$('#form-f').submit()">
 				@foreach($list_urusan as $su)
 				<option value="{{$su->id}}" {{in_array($su->id,$req->urusan)?'selected':''}}>{{$su->nama}}</option>
 				@endforeach
 
 			</select>
-		</div>
+			</div>
 	</form>
+		</div>
+	
 		
-	</div>
 	<div class="row">
 		<div class="col-md-12">
+			@php
+				$dom_id_rkpd_detail='table-rkpd';
+			@endphp
 			<div class="box box-solid">
+				<div class="box-header">
+					<div class="btn-group">
+				<button class="btn btn-success btn-sm" onclick="EXPORT_EXCEL('#{{$dom_id_rkpd_detail}}','DATA RKPD  {{$pemda?$pemda->nama:''}} TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT EXCEL<i class="fa fa-excel"></i></button>
+					<button class="btn btn-primary btn-sm" onclick="EXPORT_PDF('#{{$dom_id_rkpd_detail}}','DATA RKPD  {{$pemda?$pemda->nama:''}} TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT PDF<i class="fa fa-pdf"></i></button>
+					</div>
+				</div>
 				<div class="box-body table-responsive " style="max-height: 500px; overflow-y: scroll;">
-					@include('sinkronisasi.partial.rkpd_detail',['editable'=>true])
+					@include('sinkronisasi.partial.rkpd_detail',['editable'=>true,'dom_id_rkpd_detail'=>$dom_id_rkpd_detail])
 				</div>
 			</div>
 		</div>

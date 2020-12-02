@@ -9,12 +9,12 @@
 
 
 @section('content')
-<div class="container-fluid" style="margin-bottom: 10px;">
+<div class="row" style="margin-bottom: 10px;">
 	<form action="{{url()->current()}}" method="get" id="form-f">
 			
 		<div class="col-md-12">
 			<label>URUSAN</label>
-			<select class="form-control init-select-2" multiple="" name="urusan[]" onchange="$('#form-f').submit()">
+			<select class="form-control init-select-2"  name="urusan[]" onchange="$('#form-f').submit()">
 				@foreach($list_urusan as $su)
 				<option value="{{$su->id}}" {{in_array($su->id,$req->urusan)?'selected':''}}>{{$su->nama}}</option>
 				@endforeach
@@ -26,8 +26,14 @@
 	</div>
 
 <div class="box box-solid">
+	<div class="box-header with-border">
+					<div class="btn-group">
+						<button class="btn btn-success btn-sm" onclick="EXPORT_EXCEL('#treetable-init','DATA IMPLEMENTASI MENDAT TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT EXCEL<i class="fa fa-excel"></i></button>
+					<button class="btn btn-primary btn-sm" onclick="EXPORT_PDF('#treetable-init','DATA IMPLEMENTASI MENDAT  TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT PDF<i class="fa fa-pdf"></i></button>
+					</div>
+				</div>
 				<div class="box-body table-responsive">
-					<table class="table table-bordered" id="treetable-init">
+					<table class="table table-bordered datatable-auto" id="treetable-init">
 						<thead>
 							<tr>
 								<th>SUB URUSAN</th>
@@ -58,7 +64,9 @@
 									
 									<td>
 										<p><i>"{!!nl2br($m->uraian)!!}"</i></p>
+										<br>
 										<p><b>REGULASI PUSAT</b></p>
+										<br>
 										<ul>
 											@foreach($m->uu as $uu)
 											<li>{{$uu->jenis}}/{{$uu->tahun_berlaku}} - {{$uu->uraian}}</li>

@@ -8,19 +8,24 @@
 <script type="text/javascript" src="{{asset('bower_components/L_MAP/ind/ind.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/L_MAP/ind/kota.js')}}"></script>
 <script type="text/javascript" src="{{asset('bower_components/L_MAP/idn_11.js')}}"></script>
+<h1 class="text-center"><b>DATA PEMETAAN  RKPD TAHUN {{$GLOBALS['tahun_access']}}</b></h1>
+@if($req_urusan)
+<p class="text-center">{{$req_urusan?$req_urusan->nama:''}}</p>
+@endif
+<hr>
 @stop
 
 
 @section('content')
-<h1 class="text-center"><b>PEMDA MELAPORKAN RKPD {{$GLOBALS['tahun_access']}}</b></h1>
-<hr>
 
-<div class="container-fluid" style="margin-bottom: 10px;">
+
+<div class="row" style="margin-bottom: 10px;">
 	<form action="{{url()->current()}}" method="get" id="form-f">
 			
 		<div class="col-md-12">
 			<label>URUSAN</label>
-			<select class="form-control init-select-2" multiple="" name="urusan[]" onchange="$('#form-f').submit()">
+			<select class="form-control init-select-2"  name="urusan[]" onchange="$('#form-f').submit()">
+				<option value="">-</option>
 				@foreach($list_urusan as $su)
 				<option value="{{$su->id}}" {{in_array($su->id,$req->urusan)?'selected':''}}>{{$su->nama}}</option>
 				@endforeach
@@ -57,12 +62,13 @@
 <div class="row" style="margin-bottom: 15px;">
 
 
-	<div class="col-md-6" id="chart" style="background: #fff; height: 462px;">
+	<div class="col-md-12">
+		<div class="col-md-6" id="chart" style="background: #fff; height: 462px;">
 
 	</div>
 	<div class="col-md-6"  style="background: #fff;  height: 462px;">
 		<div id="map"></div>
-		<p class="text-center"><b>Persentase Pelaporan</b></p>
+		<p class="text-center"><b>Persentase Pemetaan RKPD</b></p>
 		<ul class="list-group list-group-horizontal text-center">
 		  <li class="list-group-item"><i class="fas fa-circle"></i> =0%</li>
 		  <li class="list-group-item"><i class="fas fa-circle" style="color:red;"></i> <=20%</li>
@@ -72,27 +78,33 @@
 		  <li class="list-group-item"><i class="fas fa-circle" style="color:#45ff23;"> </i> <=100%</li>
 		</ul>
 	</div>
+	</div>
 
 </div>
-<div class="container">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box box-solid">
+				<div class="box-header with-border">
+					<div class="btn-group">
+						<button class="btn btn-success btn-sm" onclick="EXPORT_EXCEL('#table-data','DATA RKPD PER PROVINSI TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT EXCEL<i class="fa fa-excel"></i></button>
+					<button class="btn btn-primary btn-sm" onclick="EXPORT_PDF('#table-data','DATA RKPD PEMDA PER PROVINSI TAHUN {{$GLOBALS['tahun_access']}}')">EXPORT PDF<i class="fa fa-pdf"></i></button>
+					</div>
+				</div>
 				<div class="box-body">
-					<table class="table table-bordered datatable-init" >
+					<table data-page-length="548" class="table table-bordered datatable-auto" id="table-data" >
 						<thead>
 							<tr>
 								<th>KODEPEMDA</th>
 								<th>NAMA PEMDA</th>
 								<th>JUMLAH PEMDA</th>
-								<th>JUMLAH PEMDA MELAPOR</th>
-								<th>PERSENTASE PELAPORAN PEMDA</th>
-								<th>PROVINSI MELAPORKAN RKPD</th>
-								<th>PAGU RKPD PROVINSI </th>
+								<th>JUMLAH PEMDA TERPETAKAN</th>
+								<th>PERSENTASE PEMETAAN PEMDA</th>
+								<th>PROVINSI PEMETAAN RKPD</th>
+								<th>PAGU RKPD PEMETAAN PROVINSI </th>
 
 								<th>JUMLAH PROGRAM PROVINSI</th>
 								<th>JUMLAH KEGIATAN PROVINSI</th>
-								<th>ACTION</th>
+								<th data-tableexport-display="none" >ACTION</th>
 
 							</tr>
 						</thead>
@@ -104,12 +116,12 @@
 									<td>{{$d->jumlah_pemda}} PEMDA</td>
 									<td>{{$d->jumlah_pemda_melapor}} PEMDA</td>
 									<td style="background:{{$d->color}}; {{in_array($d->color,['black','red','green'])?'color:#fff;':''}}"><b>{{number_format($d->value,1)}}%</b></td>
-									<td>{{$d->provinsi_melapor?'MELAPOR':'TIDAK'}}</td>
+									<td>{{$d->provinsi_melapor?'TERPETAKAN':'BELUM TERPETAKAN'}}</td>
 									<td>Rp. {{number_format($d->jumlah_pagu)}} </td>
 
-									<td>{{number_format($d->jumlah_program)}} Program</td>
-									<td>{{number_format($d->jumlah_kegiatan)}} Kegiatan</td>
-									<td>
+									<td>{{number_format($d->jumlah_program)}}</td>
+									<td>{{number_format($d->jumlah_kegiatan)}}</td>
+									<td data-tableexport-display="none" >
 										<div class="btn-group-vertical">
 											<a href="{{route('d.rkpd.detail',['tahun'=>$GLOBALS['tahun_access'],'kodepemda'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-primary btn-xs">Detail RKPD Provinsi</a>
 										<a href="{{route('d.rkpd.per_provinsi',['tahun'=>$GLOBALS['tahun_access'],'id'=>$d->id,'urusan'=>$req->urusan])}}" class="btn btn-success btn-xs">Detail Pemda</a>
@@ -130,7 +142,6 @@
 			</div>
 		</div>
 	</div>
-</div>
 
 	
 </div>
@@ -159,6 +170,9 @@
                     },
                     enabled:false
                 },
+                subtitle:{
+			    	text:'{{$req_urusan?$req_urusan->nama:''}}'
+			    },
 
                 legend: {
                     enabled: false
@@ -230,6 +244,9 @@ Highcharts.chart('chart', {
     xAxis: {
         type: "category"
     },
+     subtitle:{
+			    	text:'{{$req_urusan?$req_urusan->nama:''}}'
+			    },
     yAxis: {
         min: 0,
         title: {
@@ -245,12 +262,12 @@ Highcharts.chart('chart', {
         }
     },
     series: [{
-        name: 'PEMDA MELAPOR',
+        name: 'PEMDA TERDAPAT DATA PEMETAAN',
         color:'green',
         data: <?=json_encode($data_chart['melapor'])?>
     },
     {
-        name: 'PEMDA TIDAK MELAPOR',
+        name: 'PEMDA TIDAK TERDAPAT DATA PEMETAAN',
         color:'red',
         data: <?=json_encode($data_chart['tidak_melapor'])?>
     }]
