@@ -120,8 +120,10 @@ class InitCtrl extends Controller
             Schema::create('sink_form.t_'.$tahun.'_dukungan_pusat_indikator_bridge',function(Blueprint $table) use ($tahun){
                 $table->bigIncrements('id');
                 $table->integer('tahun')->defautl($tahun);
-                $table->bigInteger('id_indikator')->defautl($tahun);
-                $table->bigInteger('id_dukungan_pusat')->defautl($tahun);
+                $table->bigInteger('id_indikator');
+                $table->bigInteger('id_dukungan_pusat');
+                $table->bigInteger('id_urusan')->nullable();
+                $table->bigInteger('id_sub_urusan')->nullable();
 
                 $table->foreign('id_dukungan_pusat')
                   ->references('id')->on('sink_form.t_'.$tahun.'_dukungan_pusat')

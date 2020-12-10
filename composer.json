@@ -13,6 +13,7 @@
         "jeroennoten/laravel-adminlte": "1.27.*",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
+        "nahid/jsonq": "^6.0",
         "phpoffice/phpspreadsheet": "^1.15",
         "ramsey/uuid": "3.*"
     },

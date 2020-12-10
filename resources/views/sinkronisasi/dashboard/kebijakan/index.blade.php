@@ -127,11 +127,6 @@
 									<td>{{number_format($d->jumlah_mandat_kegiatan)}} Mandat</td>
 									<td>{{number_format($d->jumlah_mandat_kegiatan_sesuai)}}  Mandat</td>
 									
-
-
-
-
-
 								</tr>
 							@endforeach
 							

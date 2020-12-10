@@ -132,8 +132,11 @@ class PERMASALAHANPEMDACTRL extends Controller
     
     	foreach($data as $key=>$ms){
     		$data[$key]->ms=YDB::query("select * ,(select count(id) from sink_form.td_".$tahun."_rekomendasi as rk where rk.kodepemda='".$kodepemda."' and rk.id_urusan=".session('main_urusan')->id." and rk.id_ms=msd.id) as implement from sink_form.td_".$tahun."_permasalahan as msd where msd.kodepemda='".$kodepemda."' and msd.id_urusan=".session('main_urusan')->id." and jenis='MASALAH' and msd.id_parent=".$ms->id)->get();
+
     		foreach($data[$key]->ms as $keyms=>$ak){
+
 	    		$data[$key]->ms[$keyms]->akar=YDB::query("select *,(select count(id) from sink_form.td_".$tahun."_rekomendasi as rk where rk.kodepemda='".$kodepemda."' and rk.id_urusan=".session('main_urusan')->id." and rk.id_ms=msd.id) as implement from sink_form.td_".$tahun."_permasalahan as msd where msd.kodepemda='".$kodepemda."' and msd.id_urusan=".session('main_urusan')->id." and jenis='AKAR MASALAH' and msd.id_parent=".$ak->id)->get();
+                
 	    		foreach($data[$key]->ms[$keyms]->akar as $keyak=>$dt){
 		    		$data[$key]->ms[$keyms]->akar[$keyak]->data=YDB::query("select *,(select count(id) from sink_form.td_".$tahun."_rekomendasi as rk where rk.kodepemda='".$kodepemda."' and rk.id_urusan=".session('main_urusan')->id." and rk.id_ms=msd.id) as implement from sink_form.td_".$tahun."_permasalahan as msd where msd.kodepemda='".$kodepemda."' and msd.id_urusan=".session('main_urusan')->id." and jenis='DATA DUKUNG' and msd.id_parent=".$dt->id)->get();
 		    	}

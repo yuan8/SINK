@@ -16,11 +16,19 @@ class KEBIJAKAN5CTRL extends Controller
 
     public function edit($tahun,$id){
         $data=DB::table("sink_form.t_".$tahun."_rpjmn")->where('id',$id)->where('id_urusan',session('main_urusan')->id)->first();
-        if($data){
+         $sub_urusan=[];
             $parent=static::nested($data);
+
+        
+        if($data){
+            if($parent['context']=='ARAH KEBIJAKAN'){
+
+            $sub_urusan=DB::table('public.master_sub_urusan')->where('id_urusan',session('main_urusan')->id)->get();
+        }
             return view('sinkronisasi.pusat.kebijakan5.partial.form_edit')->with([
                 'data'=>(array)$data,
-                'item'=>$parent
+                'item'=>$parent,
+                'sub_urusan'=>$sub_urusan
             ]);
         }
     }
@@ -31,6 +39,8 @@ class KEBIJAKAN5CTRL extends Controller
             DB::table("sink_form.t_".$tahun."_rpjmn")->where('id',$id)->where('id_urusan',session('main_urusan')->id)->update([
                 'uraian'=>$request->uraian,
                 'keterangan'=>$request->keterangan,
+                'id_sub_urusan'=>$request->sub_urusan,
+
                 ]
             );
         }
@@ -140,11 +150,15 @@ class KEBIJAKAN5CTRL extends Controller
     		$data[$key]->isu=YDB::query("select * from sink_form.t_".$tahun."_rpjmn where id_urusan=".session('main_urusan')->id." and jenis='ISU STRATEGIS' and id_parent=".$d->id." order by id desc")->get();
 
     		foreach ($data[$key]->isu as $keyisu=>$isu) {
-    			$data[$key]->isu[$keyisu]->arah_kebijakan=YDB::query("select * from sink_form.t_".$tahun."_rpjmn where id_urusan=".session('main_urusan')->id." and jenis='ARAH KEBIJAKAN' and id_parent=".$isu->id." order by id desc")->get();
+    			$data[$key]->isu[$keyisu]->arah_kebijakan=YDB::query("select
+                    (select su.nama from public.master_sub_urusan as su where su.id=rpjmn.id_sub_urusan) as nama_sub_urusan,rpjmn.*
+                     from sink_form.t_".$tahun."_rpjmn as rpjmn where id_urusan=".session('main_urusan')->id." and jenis='ARAH KEBIJAKAN' and id_parent=".$isu->id." order by id desc")->get();
 
     			foreach ($data[$key]->isu[$keyisu]->arah_kebijakan as $keykebijakan=>$kb) {
 
-    				$data[$key]->isu[$keyisu]->arah_kebijakan[$keykebijakan]->indikator=YDB::query("select bridge.id as id_bridge,bridge.id_rpjmn as id_rpjmn, i.*,(select nama from public.master_sub_urusan  as  su where su.id = i.id_sub_urusan) as nama_sub_urusan, (select uraian from sink_form.t_".$tahun."_sumber_data  as  sd where sd.id = i.id_sumber) as sumber_data from sink_form.t_".$tahun."_indikator_rpjmn_bridge as bridge
+    				$data[$key]->isu[$keyisu]->arah_kebijakan[$keykebijakan]->indikator=YDB::query("
+
+                    select bridge.id as id_bridge,bridge.id_rpjmn as id_rpjmn, i.*,(select nama from public.master_sub_urusan  as  su where su.id = i.id_sub_urusan) as nama_sub_urusan, (select uraian from sink_form.t_".$tahun."_sumber_data  as  sd where sd.id = i.id_sumber) as sumber_data from sink_form.t_".$tahun."_indikator_rpjmn_bridge as bridge
                     join t_".$tahun."_indikator as i on  i.id_urusan=".session('main_urusan')->id." and  i.id=bridge.id_indikator
                       where  bridge.id_rpjmn=".$kb->id." order by i.id desc")->get();
     			}
@@ -205,6 +219,8 @@ class KEBIJAKAN5CTRL extends Controller
                     'kode'=>'dsjkdjks3he3uhd',
                     'id_parent'=>$id,
                     'id_urusan'=>session('main_urusan')->id,
+                    'id_sub_urusan'=>$request->sub_urusan,
+
                     'keterangan'=>$request->keterangan
                 ]
             );
@@ -246,7 +262,11 @@ class KEBIJAKAN5CTRL extends Controller
         }
 
         $peta=static::nested($data);
-        return view('sinkronisasi.pusat.kebijakan5.partial.form_add_item')->with(['item'=>$peta]);
+        $sub_urusan=[];
+        if($peta['child_context']=='ARAH KEBIJAKAN'){
+            $sub_urusan=DB::table('public.master_sub_urusan')->where('id_urusan',session('main_urusan')->id)->get();
+        }
+        return view('sinkronisasi.pusat.kebijakan5.partial.form_add_item')->with(['item'=>$peta,'sub_urusan'=>$sub_urusan]);
         
     }
 }

@@ -91,7 +91,7 @@
 									</tr>
 									@foreach($isu->arah_kebijakan as $kb)
 										<tr data-tt-parent-id="ISU_{{$kb->id_parent}}" data-tt-id="KEBIJAKAN_{{$kb->id}}">
-											<td></td>
+											<td>{{$kb->nama_sub_urusan}}</td>
 											<td>
 												<div class="btn-group">
 													<button onclick="showForm('{{route('sink.pusat.kebijakan5.form.delete',['tahun'=>$GLOBALS['tahun_access'],'id'=>$kb->id])}}')" class="btn  btn-xs btn-danger"><i class="fa fa-trash"></i></button>

@@ -6,6 +6,18 @@
 	</div>
 	<div class="modal-body">
 		 <div class="row">
+       @if($item['context']=='ARAH KEBIJAKAN')
+        <div class="col-md-12">
+            <div class="form-group">
+              <label>SUB URUSAN </label>
+              <select class="form-control" name="sub_urusan" required="">
+                @foreach($sub_urusan as $su)
+                  <option value="{{$su->id}}" {{$data['id_sub_urusan']==$su->id?'selected':''}}>{{$su->nama}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+        @endif
           <div class="col-md-12">
             <div class="form-group">
               <label>URAIAN {{$item['context']}}</label>

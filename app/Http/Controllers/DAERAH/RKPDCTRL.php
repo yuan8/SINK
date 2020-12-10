@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use YDB;
 use Storage;
 use DB;
+use Nahid\JsonQ\Jsonq;
 class RKPDCTRL extends Controller
 {
     //
@@ -35,54 +36,55 @@ class RKPDCTRL extends Controller
     }
 
     public function index($tahun,$kodepemda){
+        $data=[
+            'name'=>'RKPD '.$tahun." ".$kodepemda,
 
-        $data_k=DB::table("rkpd.master_".$tahun."_kegiatan as k")->whereRaw("k.id_urusan=".session('main_urusan')->id."
+        ];
+        $data['kegiatan']=DB::table("rkpd.master_".$tahun."_kegiatan as k")->whereRaw("k.id_urusan in".session('main_urusan')->id."
                 and k.kodepemda='".$kodepemda."'")
-        ->select("k.*")
-        ->get()->pluck('id_program');
+        ->selectRaw("k.* , 'KEGIATAN' as jenis ")
+        ->get();
+
+        $data['program']=DB::table("rkpd.master_".$tahun."_program as k")->whereRaw("k.kodepemda='".$kodepemda."' and k.id in (".implode(',',($data['kegiatan']->pluck('id_program')->toArray())).")" )
+        ->selectRaw("k.*, 'PROGRAM' as jenis, 0 as  pagu")
+        ->get();
+
+         $data['capaian']=DB::table("rkpd.master_".$tahun."_program_capaian as k")->whereRaw("k.kodepemda='".$kodepemda."' and k.id_program in (".implode(',',($data['kegiatan']->pluck('id_program')->toArray())).")" )
+        ->selectRaw("k.*,  'CAPAIAN' as jenis")
+        ->get();
+
+        $data['indikator']=DB::table("rkpd.master_".$tahun."_kegiatan_indikator as k")->whereRaw("k.kodepemda='".$kodepemda."' and k.id_kegiatan in (".implode(',',($data['kegiatan']->pluck('id')->toArray())).")" )
+        ->selectRaw("k.*,  'INDIKATOR' as jenis")
+        ->get();
+
+        $data_map=json_encode($data);
+        $kegiatan=new Jsonq(($data_map));
+        foreach ($data['kegiatan'] as $key => $k) {
+            $data['kegiatan'][$key]->output=$kegiatan->from('indikator')->where('id_kegiatan','=',$k->id)->get();
+
+            # code...
+        }
+
+        $data_map=json_encode($data);
 
 
-    	
-        $data=DB::table("rkpd.master_".$tahun."_program as p")
-        ->selectRaw("p.*,'PROGRAM' as jenis, 0 as pagu")
-        ->whereIn('id',$data_k)->get();
+        foreach ($data['program'] as $key => $p) {
+             $kegiatan=new Jsonq(($data_map));
 
-    	foreach ($data as $key => $p) {
-    		$data[$key]->outcome=YDB::query("select c.*,'CAPAIAN' as jenis from rkpd.master_".$tahun."_kegiatan as k
-    		join rkpd.master_".$tahun."_program_capaian as c  on k.id_program=c.id_program and c.tolokukur is not null
-    		where
-    		 k.kodepemda='".$kodepemda."' and k.id_urusan=".session('main_urusan')->id."  and k.id_program=".$p->id."
-    		")->get();
-    		# code...
-    	}
+            $data['program'][$key]->kegiatan=$kegiatan->from('kegiatan')->where('id_program','=',$p->id)->get();
+        $kegiatan=new Jsonq(($data_map));
 
-
-    	foreach ($data as $keyp => $p) {
-                 $px=DB::table("rkpd.master_".$tahun."_kegiatan as k")->whereRaw("k.id_urusan=".session('main_urusan')->id."
-                    and k.kodepemda='".$kodepemda."' and k.id_program=".$p->id)
-            ->selectRaw("k.* ,'KEGIATAN' as jenis")
-            ->get();
-
-            
-    		$data[$keyp]->kegiatan=$px;
-            $pagu=$px->pluck('pagu')->toArray();
-            $data[$keyp]->pagu=array_sum(($pagu));
-
-
-    		
-    		foreach ($data[$keyp]->kegiatan as $keyk => $k) {
-	    		$data[$keyp]->kegiatan[$keyk]->output=YDB::query("select i.*,'INDIKATOR' as jenis from rkpd.master_".$tahun."_kegiatan as k 
-	    		join rkpd.master_".$tahun."_kegiatan_indikator as i on k.id=i.id_kegiatan and i.tolokukur is not null
-	    		where
-	    		 k.kodepemda='".$kodepemda."' and k.id_urusan=".session('main_urusan')->id." and i.id_kegiatan=".$k->id."
-	    		")->get();
-	    		# code...
-	    	}
-    	}
+            $data['program'][$key]->outcome=$kegiatan->from('capaian')->where('id_program','=',$p->id)->get();
+        }
 
 
 
 
-    	return view('sinkronisasi.daerah.rkpd.index')->with(['data'=>$data]);
+
+
+
+
+
+    	return view('sinkronisasi.daerah.rkpd.index')->with(['data'=>$data['program']]);
     }
 }
