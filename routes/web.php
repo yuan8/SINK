@@ -11,13 +11,63 @@
 |
 */
 Route::get('mogo',function(){
-	$data=['
-	_id'=>'djskjdksj',
-	'data'=>'jdkjskdjkdjk djskjdk'
 
-	];
-	$db=DB::connection('mongodb')->collection('def')
-  	->insertGetId($data);
+	$data=DB::connection('p')->table('public.kb5_kondisi_saat_ini')->get();
+	foreach ($data as $key => $value) {
+
+		$data[$key]->child=DB::connection('p')->table('public.kb5_isu_strategis')->where('id_kondisi',$value->id)->get();
+		foreach ($data[$key]->child as $i => $d) {
+		$data[$key]->child[$i]->child=DB::connection('p')->table('public.kb5_arah_kebijakan')->where('id_isu',$d->id)->get();
+
+		}
+	}
+
+	foreach ($data as $key => $value) {
+		$id_urusan=$value->id_urusan;
+		$id_kondisi=DB::table('sink_form.t_2020_rpjmn')->insertGetId([
+			'uraian'=>$value->uraian,
+			'tahun'=>2020,
+			'jenis'=>'KONDISI SAAT INI',
+			'kode'=>$value->kode,
+			'id_urusan'=>$id_urusan
+		]);
+		foreach ($value->child as $i => $isu) {
+			$id_isu=DB::table('sink_form.t_2020_rpjmn')->insertGetId([
+				'uraian'=>$isu->uraian,
+				'tahun'=>2020,
+				'jenis'=>'ISU STRATEGIS',
+				'kode'=>$isu->kode,
+				'id_urusan'=>$id_urusan,
+				'id_parent'=>$id_kondisi
+
+			]);
+			foreach ($isu->child as $a => $ak) {
+				# code...
+				$id_ak=DB::table('sink_form.t_2020_rpjmn')->insertGetId([
+				'uraian'=>$ak->uraian,
+				'tahun'=>2020,
+				'jenis'=>'ARAH KEBIJAKAN',
+				'kode'=>$ak->kode,
+				'id_urusan'=>$id_urusan,
+				'id_parent'=>$id_isu
+			]);
+			}
+		}
+	}
+
+	dd('ok');
+
+
+
+
+	// dd($data);
+	// $data=['
+	// _id'=>'djskjdksj',
+	// 'data'=>'jdkjskdjkdjk djskjdk'
+
+	// ];
+	// $db=DB::connection('mongodb')->collection('def')
+ //  	->insertGetId($data);
 });
 
 
