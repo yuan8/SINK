@@ -283,7 +283,7 @@
 															<button class="btn  btn-xs btn-danger"
 													onclick="showForm('{{route('sink.pusat.kebijakan1.form.delete',['tahun'=>$GLOBALS['tahun_access'],'id'=>$proyek->id])}}')"
 													><i class="fa fa-trash"></i></button>
-															<button onclick="showForm('{{route('sink.pusat.indikator.form.edit',['tahun'=>$GLOBALS['tahun_access'],'id'=>$i->id])}}')" class="btn  btn-xs btn-warning"><i class="fa fa-pen"></i></button>
+															<button onclick="showForm('{{route('sink.pusat.indikator.form.edit',['tahun'=>$GLOBALS['tahun_access'],'id'=>$proyek->id])}}')" class="btn  btn-xs btn-warning"><i class="fa fa-pen"></i></button>
 															
 															<button class="btn  btn-xs btn-success" onclick="showform('{{route('sink.pusat.kebijakan1.form.ind.form_tambah',['tahun'=>$GLOBALS['tahun_access'],'id'=>$proyek->id])}}')"><i class="fa fa-plus" ></i> INDIKATOR</button>
 														</div>
